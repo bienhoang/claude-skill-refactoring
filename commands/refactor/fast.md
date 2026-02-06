@@ -1,0 +1,65 @@
+---
+description: ⚡ Auto review, plan & refactor without developer interaction
+argument-hint: [target --safe|--no-tests]
+---
+
+Activate `refactoring` skill.
+
+## Mission
+Autonomously refactor the target code with no developer interaction:
+<target>$ARGUMENTS</target>
+
+## Argument Parsing
+Parse `$ARGUMENTS` for flags:
+- `--safe` → write characterization tests before refactoring
+- `--no-tests` → skip test verification entirely (**emit warning before proceeding**)
+- Everything else → target file path or description
+
+Default (no flags): run existing tests only, do not write new tests.
+
+## Workflow
+
+### 1. Scout
+Use `scout` subagent to read target files/directories and understand code structure.
+
+### 2. Analyze
+Load `references/code-smells.md`. Scan target code for smells silently (do not report to user — this is fast mode).
+
+Prioritize by severity:
+1. Correctness risks
+2. High-impact structural smells (God Class, Long Method, Feature Envy)
+3. Duplication (DRY violations)
+4. Naming and readability
+
+### 3. Safeguard
+Based on flag mode:
+- **Default**: Check for existing tests. Run them to establish baseline. If they pass, proceed.
+- **`--safe`**: Write characterization tests for the target code first, then run them to establish baseline.
+- **`--no-tests`**: Use `AskUserQuestion` to confirm: "⚠️ --no-tests flag detected. Refactoring without test verification is risky. Proceed anyway?" Options: "Yes, skip tests" / "No, run existing tests instead". Only proceed without tests if user explicitly confirms.
+
+### 4. Transform
+Load `references/refactoring-methods.md`. Apply refactoring techniques:
+- **One refactoring at a time.** Apply single transformation, verify, then proceed.
+- **Small steps.** Break large refactorings into sequence of small, safe transformations.
+- **Preserve behavior.** External observable behavior must not change.
+- Read `references/language-patterns.md` for language-specific patterns when needed.
+
+### 5. Verify
+After each transformation (unless `--no-tests`):
+1. Run the test suite (auto-detect: pytest, jest/vitest, go test, cargo test, etc. based on project config)
+2. If any test fails → **revert immediately** using `git checkout -- <changed-files>`, then skip to next planned refactoring or stop
+3. If all pass → continue to next transformation
+
+### 6. Report
+Present summary to user:
+- Smells found (count by severity)
+- Refactoring methods applied and why
+- Before/after key metrics (complexity, duplication, line count)
+- Test results summary
+- Remaining smells or suggested follow-ups
+
+## Safety Rules
+- Never batch multiple refactorings without intermediate verification
+- Revert on test failure — use `git checkout -- <changed-files>` to restore previous state
+- If unsure whether behavior changes → skip that refactoring (do not ask in fast mode, just skip)
+- If a subagent (scout, tester) fails → report error and stop gracefully, do not proceed with incomplete information
