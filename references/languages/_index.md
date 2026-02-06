@@ -20,6 +20,12 @@
 | .cs | csharp.md | .NET/NuGet |
 | .swift | swift.md | SPM/CocoaPods |
 | .kt, .kts | kotlin.md | Gradle |
+| .c, .cpp, .cc, .cxx, .h, .hpp | cpp.md | CMake/Make |
+| .dart | dart.md | pub, pubspec.yaml |
+| .scala, .sc | scala.md | sbt/Gradle |
+| .ex, .exs | elixir.md | Mix/Hex |
+| .sh, .bash, .zsh | shell-bash.md | Shell/POSIX |
+| .lua | lua.md | LuaRocks |
 
 ## Multi-Language Projects
 When target spans multiple languages:

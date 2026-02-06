@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.2.0] - 2026-02-06
+
+### Added
+- **6 new language reference files** under `references/languages/`:
+  - `cpp.md` — 15 smells, CMake/clang-format/clang-tidy detection, Qt/Boost/gRPC patterns, C++11–23 version-gated
+  - `dart.md` — 15 smells, pubspec/analysis_options detection, Flutter/Riverpod/Bloc/Shelf patterns, Dart 2.12–3.x
+  - `scala.md` — 15 smells, build.sbt/scalafmt/scalafix detection, Play/Akka/ZIO/Cats Effect patterns, Scala 2.12–3.x
+  - `elixir.md` — 15 smells, mix.exs/credo/formatter detection, Phoenix/LiveView/Ecto patterns, Elixir 1.12–1.17
+  - `shell-bash.md` — 15 smells, shellcheckrc/shfmt detection, Bats/shellspec testing, Bash 4+/5+/POSIX
+  - `lua.md` — 15 smells, luacheckrc/stylua detection, LÖVE2D/Neovim/OpenResty patterns, Lua 5.1–5.4/LuaJIT
+- Updated `_index.md` routing table with 6 new extension mappings
+
+### Changed
+- Total language count: 10 → 16
+- README updated with expanded language list and directory tree
+
 ## [1.1.0] - 2026-02-06
 
 ### Added
