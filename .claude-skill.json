@@ -1,0 +1,15 @@
+{
+  "name": "refactoring",
+  "version": "1.0.0",
+  "description": "Systematic code refactoring with code smell detection, safe transformation, and test verification",
+  "targets": {
+    "claude-code": {
+      "global": "~/.claude/skills/refactoring",
+      "project": ".claude/skills/refactoring"
+    }
+  },
+  "files": {
+    "SKILL.md": "SKILL.md",
+    "references": "references/"
+  }
+}

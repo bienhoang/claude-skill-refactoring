@@ -1,0 +1,39 @@
+{
+  "name": "claude-skill-refactoring",
+  "version": "1.0.0",
+  "description": "Claude Code skill for systematic code refactoring with code smell detection, safe transformation, and test verification",
+  "keywords": [
+    "claude-code",
+    "claude-skill",
+    "agent-skill",
+    "refactoring",
+    "code-smell",
+    "code-quality",
+    "clean-code",
+    "testing",
+    "ai-coding"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOUR_USERNAME/claude-skill-refactoring.git"
+  },
+  "homepage": "https://github.com/YOUR_USERNAME/claude-skill-refactoring#readme",
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/claude-skill-refactoring/issues"
+  },
+  "scripts": {
+    "postinstall": "node install-skill.js",
+    "preuninstall": "node uninstall-skill.js"
+  },
+  "files": [
+    "SKILL.md",
+    "references/",
+    ".claude-skill.json",
+    "install-skill.js",
+    "uninstall-skill.js",
+    "README.md",
+    "LICENSE"
+  ]
+}
