@@ -44,7 +44,7 @@ git clone https://github.com/YOUR_USERNAME/claude-skill-refactoring.git .claude/
 
 ## Usage
 
-Once installed, the skill activates automatically when you ask Claude Code to refactor. Examples:
+Once installed, the skill activates automatically when you ask Claude Code to refactor. You can also use slash commands for more control.
 
 ```
 # Natural language — Claude detects the skill automatically
@@ -54,13 +54,62 @@ Once installed, the skill activates automatically when you ask Claude Code to re
 "this class is too large, help me split it"
 "improve the code quality of src/utils.ts"
 
-# Or invoke directly
-/refactoring
+# Or use slash commands (see below)
+/refactor src/utils.ts
+```
+
+## Slash Commands
+
+Once installed, you get four slash commands:
+
+### `/refactor [target]` — Intelligent Router
+
+Automatically detects the best approach based on scope:
+- Single file → routes to `/refactor:fast`
+- Directory or module → routes to `/refactor:plan`
+- Plan file path → routes to `/refactor:implement`
+
+### `/refactor:fast [target] [flags]` — Autonomous Refactoring
+
+Fully autonomous: review code, apply refactoring, verify tests — no interaction needed.
+
+**Flags:**
+- `--safe` — write characterization tests before refactoring
+- `--no-tests` — skip test verification (use with caution)
+
+**Examples:**
+```
+/refactor:fast src/utils.ts
+/refactor:fast src/services/ --safe
+/refactor:fast src/legacy.js --no-tests
+```
+
+### `/refactor:plan [target]` — Collaborative Planning
+
+Brainstorm with you, create a detailed refactoring plan with phases.
+
+**Examples:**
+```
+/refactor:plan src/services/
+/refactor:plan src/core/ "focus on reducing duplication"
+```
+
+### `/refactor:implement [plan-path|target]` — Execute Refactoring
+
+Execute a refactoring plan phase by phase, or review-then-apply without a plan.
+
+**Examples:**
+```
+# With plan
+/refactor:implement plans/refactor-services/plan.md
+
+# Without plan (review-then-apply)
+/refactor:implement src/utils.ts
 ```
 
 ## How it works
 
-Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` (project). This package copies the skill files to the appropriate location on `npm install` and removes them on `npm uninstall`.
+Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` (project). This package copies the skill files and slash commands to the appropriate locations on `npm install` and removes them on `npm uninstall`.
 
 ```
 ~/.claude/skills/refactoring/
@@ -69,6 +118,13 @@ Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` 
     ├── code-smells.md                # Smell catalog (loaded when analyzing)
     ├── refactoring-methods.md        # Method catalog (loaded when transforming)
     └── language-patterns.md          # Language-specific patterns (loaded as needed)
+
+~/.claude/commands/
+├── refactor.md                       # Router (intelligent routing)
+└── refactor/
+    ├── fast.md                       # /refactor:fast
+    ├── plan.md                       # /refactor:plan
+    └── implement.md                  # /refactor:implement
 ```
 
 References are loaded on-demand using Claude's progressive disclosure pattern — they only consume context when Claude actually needs them.

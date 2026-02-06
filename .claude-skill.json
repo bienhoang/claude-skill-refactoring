@@ -5,11 +5,14 @@
   "targets": {
     "claude-code": {
       "global": "~/.claude/skills/refactoring",
-      "project": ".claude/skills/refactoring"
+      "project": ".claude/skills/refactoring",
+      "commands-global": "~/.claude/commands",
+      "commands-project": ".claude/commands"
     }
   },
   "files": {
     "SKILL.md": "SKILL.md",
-    "references": "references/"
+    "references": "references/",
+    "commands": "commands/"
   }
 }
