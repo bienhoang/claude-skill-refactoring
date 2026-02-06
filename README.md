@@ -36,10 +36,10 @@ npm install --save-dev claude-skill-refactoring
 
 ```bash
 # Global
-git clone https://github.com/YOUR_USERNAME/claude-skill-refactoring.git ~/.claude/skills/refactoring
+git clone https://github.com/bienhoang/claude-skill-refactoring.git ~/.claude/skills/refactoring
 
 # Project-level
-git clone https://github.com/YOUR_USERNAME/claude-skill-refactoring.git .claude/skills/refactoring
+git clone https://github.com/bienhoang/claude-skill-refactoring.git .claude/skills/refactoring
 ```
 
 ## Usage
