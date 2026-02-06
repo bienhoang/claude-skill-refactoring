@@ -18,7 +18,7 @@ When you ask Claude Code to refactor your code, this skill guides it through a s
 |------|----------|
 | `references/code-smells.md` | 25+ code smells organized by category (Bloaters, OO Abusers, Change Preventers, Dispensables, Couplers, Complexity, Naming) |
 | `references/refactoring-methods.md` | 30+ refactoring techniques with step-by-step mechanics |
-| `references/language-patterns.md` | Language-specific patterns for Python, JS/TS, Java, Go, Rust — including testing framework recommendations |
+| `references/languages/` | Per-language refactoring patterns with convention discovery (Python, JS/TS, Java, Go, Rust, PHP, Ruby, C#, Swift, Kotlin) |
 
 ## Installation
 
@@ -117,7 +117,18 @@ Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` 
 └── references/
     ├── code-smells.md                # Smell catalog (loaded when analyzing)
     ├── refactoring-methods.md        # Method catalog (loaded when transforming)
-    └── language-patterns.md          # Language-specific patterns (loaded as needed)
+    └── languages/                    # Per-language patterns with convention discovery
+        ├── _index.md                 # Language routing (extensions → file mapping)
+        ├── python.md
+        ├── javascript-typescript.md
+        ├── java.md
+        ├── go.md
+        ├── rust.md
+        ├── php.md
+        ├── ruby.md
+        ├── csharp.md
+        ├── swift.md
+        └── kotlin.md
 
 ~/.claude/commands/
 ├── refactor.md                       # Router (intelligent routing)

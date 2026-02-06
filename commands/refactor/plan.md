@@ -29,7 +29,7 @@ Report smell analysis to user with severity table. Then use `AskUserQuestion` to
 - Clarify scope boundaries
 
 ### 4. Brainstorm Strategy
-Load `references/refactoring-methods.md` and `references/language-patterns.md`.
+Load `references/refactoring-methods.md`. Load `references/languages/_index.md`, identify relevant language file(s), load them, execute Discovery section to detect project conventions.
 Discuss with user:
 - Which refactoring techniques to apply and in what order
 - Risk assessment for each transformation

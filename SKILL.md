@@ -106,7 +106,16 @@ Present to the user:
 
 ## Language-Specific Guidance
 
-Read `references/language-patterns.md` for language-specific refactoring patterns covering Python, JavaScript/TypeScript, Java, Go, Rust, and more.
+### Discovery Workflow
+Before analyzing code, detect language conventions:
+1. Identify language(s) from file extensions
+2. Load `references/languages/_index.md` to find correct language file(s)
+3. Load the relevant language file(s) from `references/languages/`
+4. Execute the **Discovery** section — scan for config files, infer conventions
+5. Use discovered conventions throughout analysis and transformation phases
+6. Output two sections: **Aligned Refactorings** (respect conventions) + **Convention Improvements** (suggest better practices with reasoning)
+
+Read the appropriate language file(s) from `references/languages/` for language-specific refactoring patterns covering Python, JavaScript/TypeScript, Java, Go, Rust, PHP, Ruby, C#, Swift, and Kotlin.
 
 ## Decision Rules
 

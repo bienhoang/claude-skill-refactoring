@@ -54,7 +54,9 @@ If `$ARGUMENTS` is a file/directory path (not a plan) or no plan detected:
 - **Preserve behavior** — external observable behavior must not change
 - **Revert on failure** — use `git checkout -- <changed-files>` to restore previous state
 - **Small steps** — break large refactorings into sequence of safe transformations
-- Read `references/language-patterns.md` for language-specific patterns when needed
+- **Discovery:** Load `references/languages/_index.md`, identify language file(s), load them, execute Discovery section to detect project conventions
+- Apply language-specific patterns from loaded language file(s)
+- Output refactorings in two sections: **Aligned Refactorings** + **Convention Improvements**
 - If a subagent (scout, tester, code-reviewer) fails → report error to user and ask how to proceed
 
 ## Report

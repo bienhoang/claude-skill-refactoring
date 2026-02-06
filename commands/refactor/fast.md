@@ -42,7 +42,9 @@ Load `references/refactoring-methods.md`. Apply refactoring techniques:
 - **One refactoring at a time.** Apply single transformation, verify, then proceed.
 - **Small steps.** Break large refactorings into sequence of small, safe transformations.
 - **Preserve behavior.** External observable behavior must not change.
-- Read `references/language-patterns.md` for language-specific patterns when needed.
+- **Discovery:** Load `references/languages/_index.md`, identify language file(s), load them, execute Discovery section to detect project conventions.
+- Apply language-specific patterns from loaded language file(s).
+- Output refactorings in two sections: **Aligned Refactorings** + **Convention Improvements**.
 
 ### 5. Verify
 After each transformation (unless `--no-tests`):
