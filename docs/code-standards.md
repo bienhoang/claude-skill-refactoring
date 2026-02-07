@@ -25,6 +25,8 @@ claude-skill-refactoring/
 │   ├── metrics.md                     # Quantitative thresholds (NIST/SonarQube)
 │   ├── security-smells.md             # OWASP patterns + secrets detection
 │   ├── prioritization.md              # ROI scoring & Fix/Defer/Accept tree
+│   ├── dependency-analysis.md         # Circular deps, coupling, import graphs
+│   ├── design-patterns.md             # Smell-to-pattern mapping, YAGNI gate
 │   └── languages/
 │       ├── _index.md                  # Language routing table
 │       ├── python.md                  # Python-specific patterns
@@ -185,6 +187,25 @@ Score = (Severity × Frequency × Impact) / Effort
 - D: 20–50% debt
 - E: >50% debt (critical)
 
+### Dependency Analysis Reference (`references/dependency-analysis.md`)
+
+Maps module dependencies before multi-file refactoring:
+
+- **Circular Dependency Detection:** Direct, indirect, hidden cycles via re-exports
+- **Breaking Strategies:** Extract Interface, Dependency Inversion, Move to Third Module, Event/Callback, Merge
+- **Coupling Indicators:** Fan-out (Ce>5 = split candidate), Fan-in (Ca>10 = risky change), Hub modules
+- **Module Coupling Checklist:** Import graph mapping, boundary violations, God Module detection
+- **Per-Language Tools:** JS/TS (madge/dependency-cruiser/skott), Python (deptry/pydeps/import-linter), Go (go vet/depguard), Rust (cargo-udeps/cargo-deny), Java (jdeps/ArchUnit), C# (NDepend/ArchUnitNET)
+
+### Design Patterns Reference (`references/design-patterns.md`)
+
+Maps code smells to design pattern solutions for structural refactoring:
+
+- **Smell-to-Pattern Mapping:** 10+ common smells → pattern candidates (Switch→Strategy/State, God Class→Facade/Extract Class, Feature Envy→Move Method/Visitor, etc.)
+- **YAGNI Gate:** Apply pattern only when 3+ concrete variants exist, problem blocks development, or metrics confirm (CC>15, class>500 LOC)
+- **Modern Alternatives:** DI over Singleton, closures over Strategy, reactive streams over Observer, composition over Template Method
+- **Anti-Patterns:** Premature abstraction, God Strategy, pattern for pattern's sake, inheritance addiction
+
 ## Workflow Standards
 
 ### Skill Activation Workflow
@@ -195,8 +216,11 @@ Score = (Severity × Frequency × Impact) / Effort
 4. **Run Convention Discovery** — detect linters, formatters, frameworks
 5. **Load Analyze references** — code-smells.md, metrics.md, security-smells.md, prioritization.md
 6. **Analyze code** — detect smells, score metrics, identify hotspots
-7. **Generate report** — severity-ranked findings with ROI scores
-8. **Output format:** Aligned Refactorings + Convention Improvements
+7. **Conditional reference loading (Transform phase):**
+   - For architectural smells (God Class, Feature Envy, tight coupling, circular deps): Load design-patterns.md for smell-to-pattern mapping
+   - For multi-file/module refactoring: Load dependency-analysis.md to understand import graph and verify boundaries
+8. **Generate report** — severity-ranked findings with ROI scores
+9. **Output format:** Aligned Refactorings + Convention Improvements
 
 ### Command Routing Rules
 

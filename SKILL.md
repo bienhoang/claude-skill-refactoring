@@ -67,7 +67,13 @@ def test_existing_behavior_description():
 
 ### 3. Transform — Apply Refactoring Methods
 
-Apply refactoring techniques from `references/refactoring-methods.md`. Key principles:
+Apply refactoring techniques from `references/refactoring-methods.md`.
+
+**Conditional references (load only when relevant — skip for single-file mechanical refactorings like rename, extract method, remove dead code):**
+- For architectural smells (God Class, Feature Envy, tight coupling, circular deps): also load `references/design-patterns.md` for smell-to-pattern mapping and YAGNI gate
+- For multi-file/module refactoring: load `references/dependency-analysis.md` to understand import graph and verify boundaries before and after changes
+
+Key principles:
 
 - **One refactoring at a time.** Apply a single transformation, verify tests pass, then proceed.
 - **Small steps.** Break large refactorings into a sequence of small, safe transformations.

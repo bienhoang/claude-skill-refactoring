@@ -43,22 +43,24 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 - Route analysis to language-specific reference files
 - Two-section output: Aligned Refactorings + Convention Improvements
 
-#### Phase 2: Safe Transformation (Planned)
+#### Phase 2: Structural Analysis (v2.1.0 — IN PROGRESS)
 
-**FR2.1: Test Safeguarding**
-- Auto-detect existing tests (test files, CI configs, coverage reports)
-- Generate characterization tests capturing current behavior before refactoring
-- Run tests pre- and post-transformation; revert on failure
+**FR2.1: Dependency Analysis**
+- Circular dependency detection and breaking strategies (Extract Interface, Dependency Inversion, Move to Third Module)
+- Import graph visualization (fan-in, fan-out, coupling metrics Ce/Ca)
+- Module coupling checklist (high fan-out/fan-in candidates, boundary violations)
+- Per-language dependency tools (madge/deptry/go vet/jdeps/NDepend)
 
-**FR2.2: Atomic Refactoring**
-- Apply single refactoring at a time with verification between each
-- Support 30+ refactoring methods (Extract Method, Replace Conditional, etc.)
-- Track rollback points after each successful transformation
+**FR2.2: Design Pattern Mapping**
+- Smell-to-pattern mapping (25+ code smells → applicable design patterns)
+- YAGNI gate: apply patterns only when 3+ variants exist or active smell blocks development
+- Modern lightweight alternatives (DI over Singleton, closures over Strategy, etc.)
+- Anti-patterns: premature abstraction, God Strategy, inheritance addiction
 
-**FR2.3: Autonomous Refactoring**
-- `/refactor:fast [target] [flags]` — review, transform, verify without user intervention
-- Flags: `--safe` (write tests), `--no-tests` (skip verification)
-- Auto-revert on test failure; report changes
+**FR2.3: Transform Phase Enhancement**
+- Conditional loading: design-patterns.md for architectural smells; dependency-analysis.md for multi-file refactoring
+- Enhanced smell detection: identify architectural issues before proposing transformations
+- Phased planning integration: `/refactor:plan` now loads both dependency & pattern references
 
 #### Phase 3: Collaborative Planning (Planned)
 
@@ -136,6 +138,8 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 | `metrics.md` | 150+ | Quantitative thresholds (complexity, coupling, size) |
 | `security-smells.md` | 200+ | OWASP patterns, secrets detection, language-specific risks |
 | `prioritization.md` | 150+ | ROI scoring, Fix/Defer/Accept tree, hotspot identification |
+| `dependency-analysis.md` | 150+ | Circular deps, import graphs, module coupling, per-language tools |
+| `design-patterns.md` | 150+ | Smell-to-pattern mapping, YAGNI gate, modern alternatives, anti-patterns |
 | `languages/python.md` | 200+ | Python-specific smells, convention discovery, framework patterns |
 | `languages/javascript-typescript.md` | 200+ | JS/TS-specific smells, convention discovery, React/Vue/Next.js patterns |
 | ... (14 more language files) | 200+ each | Per-language guidance for 16 total languages |
@@ -181,11 +185,13 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 - [x] Router enhancement with keyword detection
 - [x] All 16 languages with convention discovery
 
-### v2.1.0 (2026-02-15) — Test Safeguarding
+### v2.1.0 (2026-02-15) — Structural Analysis
 
-- [ ] Characterization test generation
-- [ ] Multi-framework test support (Jest, pytest, JUnit, go test, etc.)
-- [ ] Test baseline capture and replay
+- [x] Dependency analysis reference (circular deps, coupling, import graphs)
+- [x] Design patterns reference (smell-to-pattern mapping, YAGNI gate, modern alternatives)
+- [x] Conditional reference loading in Transform phase (design-patterns.md, dependency-analysis.md)
+- [x] `/refactor:plan` Scout loads dependency analysis; Brainstorm loads design patterns
+- [ ] Advanced: refactoring recipe library (common multi-phase patterns)
 
 ### v2.2.0 (2026-03-01) — Autonomous Refactoring
 

@@ -21,6 +21,8 @@ When you ask Claude Code to refactor your code, this skill guides it through a s
 | `references/metrics.md` | Quantitative thresholds — cyclomatic/cognitive complexity, coupling, cohesion, size limits |
 | `references/security-smells.md` | OWASP Top 10 code patterns, hardcoded secrets detection, language-specific security risks |
 | `references/prioritization.md` | ROI scoring formula, Fix/Defer/Accept decision tree, quick-win identification |
+| `references/dependency-analysis.md` | Circular dependency detection, import graph analysis, module coupling checklist, per-language tools |
+| `references/design-patterns.md` | Smell-to-pattern mapping, YAGNI gate, modern alternatives, anti-patterns to avoid |
 | `references/languages/` | Per-language refactoring patterns with convention discovery (Python, JS/TS, Java, Go, Rust, PHP, Ruby, C#, Swift, Kotlin, C/C++, Dart, Scala, Elixir, Shell/Bash, Lua) |
 
 ## Installation
@@ -135,6 +137,8 @@ Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` 
     ├── metrics.md                    # Quantitative scoring thresholds
     ├── security-smells.md            # Security pattern detection
     ├── prioritization.md             # ROI-based fix ordering
+    ├── dependency-analysis.md        # Import graph and coupling analysis
+    ├── design-patterns.md            # Smell-to-pattern mapping
     └── languages/                    # Per-language patterns with convention discovery
         ├── _index.md                 # Language routing (extensions → file mapping)
         ├── python.md

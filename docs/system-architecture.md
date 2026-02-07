@@ -15,7 +15,7 @@ User Request (natural language or slash command)
        ↓
     Load References (code-smells, metrics, security, prioritization, language-specific)
        ↓
-    Execute Workflow (Analyze → Safeguard → Transform → Verify → Report)
+    Execute Workflow (Analyze → Safeguard → Transform [conditional design-patterns/dependency-analysis] → Verify → Report)
        ↓
     Output Report (findings, metrics, ROI scores, next steps)
 ```
@@ -116,21 +116,25 @@ else:
 - Atomic transformations — small, safe changes in sequence
 - Progress reporting — each transformation step logged
 
-#### `/refactor:plan` (`commands/refactor/plan.md`) — *Phase 3*
+#### `/refactor:plan` (`commands/refactor/plan.md`) — *Phase 2–3*
 
 **Purpose:** Collaborative planning — brainstorm phases with user.
 
 **Workflow:**
-1. Analyze code (same as review)
-2. Propose refactoring plan with phases
-3. Estimate effort per phase
-4. Describe expected improvements
-5. Save plan to file for later execution
+1. **Scout:** Load dependency-analysis.md; map import graph and identify circular dependencies
+2. **Analyze:** Scan code for smells; load language reference(s); execute convention discovery
+3. **Present Findings:** Report smell analysis with severity; ask user about constraints and priorities
+4. **Brainstorm Strategy:** Load refactoring-methods.md and design-patterns.md (if architectural smells detected); consult language reference for conventions
+5. **Create Plan:** Generate multi-phase plan with smell-targeting, transformation sequences, behavior preservation notes
+6. **Save Plan:** Store to `plans/refactor-{target}/plan.md` with YAML frontmatter
+
+**Conditional References:**
+- Load dependency-analysis.md during Scout phase
+- Load design-patterns.md during Brainstorm Strategy if architectural smells identified
 
 **Implicit Behavior:**
 - User approves/modifies plan before execution
-- Plan file saved to `plans/refactoring-{target}/{plan.md}`
-- Includes phase descriptions, rollback points, test strategies
+- Plan file includes phase descriptions, rollback points, test strategies, boundary preservation notes
 
 #### `/refactor:implement` (`commands/refactor/implement.md`) — *Phase 3*
 
@@ -186,6 +190,21 @@ else:
 - SonarQube Technical Debt Ratio (A–E)
 - Agent checklist for consistent prioritization
 - Used in: Analyze phase (ranking findings)
+
+**`dependency-analysis.md`** (150+ LOC)
+- Circular dependency detection (direct, indirect, hidden cycles)
+- Breaking strategies: Extract Interface, Dependency Inversion, Move to Third Module, Event/Callback, Merge
+- Import graph analysis: fan-in/fan-out indicators, hub modules, orphans, long dependency chains
+- Module coupling checklist: boundary rules, God Module detection, barrel file bloat
+- Per-language tools and commands
+- Used in: Transform phase (conditional load for multi-file refactoring)
+
+**`design-patterns.md`** (150+ LOC)
+- Smell-to-pattern mapping: 10+ common smells → applicable design patterns
+- YAGNI gate: apply only when 3+ variants exist or smell blocks development
+- Modern alternatives to GoF patterns (DI over Singleton, closures over Strategy, etc.)
+- Anti-patterns: premature abstraction, God Strategy, inheritance addiction
+- Used in: Transform phase (conditional load for architectural smells)
 
 #### Language-Specific References (`references/languages/`)
 
@@ -252,7 +271,10 @@ Each file includes:
    ├─ Load metrics.md
    ├─ Load security-smells.md
    ├─ Load prioritization.md
-   └─ Load language-specific file
+   ├─ Load language-specific file
+   └─ Conditional (Transform phase):
+      ├─ Load design-patterns.md (if architectural smells detected)
+      └─ Load dependency-analysis.md (if multi-file refactoring planned)
 
 6. Analysis
    ├─ Scan code for smells (25+ patterns)
@@ -457,13 +479,15 @@ SKILL.md (core workflow)
 ├─ references/metrics.md
 ├─ references/security-smells.md
 ├─ references/prioritization.md
+├─ references/design-patterns.md (conditional: Transform phase, architectural smells)
+├─ references/dependency-analysis.md (conditional: Transform phase, multi-file refactoring)
 └─ references/languages/{language}.md
    └─ references/languages/_index.md
 
 commands/refactor.md (router)
 ├─ commands/refactor/review.md
 ├─ commands/refactor/fast.md
-├─ commands/refactor/plan.md
+├─ commands/refactor/plan.md (loads dependency-analysis.md in Scout; design-patterns.md in Brainstorm)
 └─ commands/refactor/implement.md
 
 install-skill.js / uninstall-skill.js

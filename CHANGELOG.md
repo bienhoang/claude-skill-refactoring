@@ -8,10 +8,14 @@
 - **`references/prioritization.md`** — ROI-based scoring formula `(Severity x Frequency x Impact) / Effort`, Fix/Defer/Accept decision tree with score thresholds, CodeScene hotspot model, SonarQube Technical Debt Ratio (A-E), agent checklist for consistent prioritization.
 - **`/refactor:review`** slash command — Read-only code analysis that scans, scores, and generates prioritized report without modifying code. Loads all 4 reference catalogs.
 - Router now detects review/analyze/audit/scan keywords and routes to `/refactor:review`
+- **`references/dependency-analysis.md`** — Circular dependency detection strategies, import graph analysis guidance, module coupling checklist (>5 imports = split candidate), package boundary rules, pre/post refactoring verification, per-language tool recommendations (madge, deptry, jdeps, cargo-udeps, etc.).
+- **`references/design-patterns.md`** — Smell-to-pattern mapping table (11 smells → pattern options with context), YAGNI gate criteria (rule of three), modern alternatives to GoF patterns (Strategy → higher-order functions, Singleton → DI, etc.), 4 anti-patterns (premature abstraction, God Strategy, pattern for pattern's sake, inheritance addiction).
 
 ### Changed
 - SKILL.md Analyze phase now loads metrics.md, security-smells.md, and prioritization.md alongside code-smells.md
 - **Breaking:** Priority order updated — security vulnerabilities now ranked #1 above correctness risks. Refactoring output may differ from v1.x for codebases with security smells.
+- SKILL.md Transform phase conditionally loads design-patterns.md (architectural smells) and dependency-analysis.md (multi-file refactoring)
+- `/refactor:plan` Scout step now maps import graph; Brainstorm step consults design-patterns.md
 - Version bump: 1.2.0 → 2.0.0
 
 ## [1.2.0] - 2026-02-06
