@@ -12,11 +12,17 @@ argument-hint: [target]
 - If `$ARGUMENTS` is empty → Use `AskUserQuestion`:
   - "What would you like to refactor? Provide a file path, directory, or description."
 
-**1. Check for existing plan:**
+**1. Check for review intent:**
+- If `$ARGUMENTS` contains action keywords: "review", "analyze", "audit", "scan", "assess", "inspect", "report" as standalone words (not inside file paths)
+- Or if `$ARGUMENTS` starts with `--review`
+→ `/refactor:review <target>` (strip the keyword, pass remaining as target)
+- **Note:** If target is a `.md` plan file AND contains a review keyword (e.g., "review my plan.md"), prefer plan routing (Step 2) — the user likely wants to execute the plan, not review it
+
+**2. Check for existing plan:**
 - If `$ARGUMENTS` is a path to a `.md` plan file → `/refactor:implement <path>`
 - If active refactoring plan exists in `./plans/` matching "refactor" → `/refactor:implement`
 
-**2. Route by scope:**
+**3. Route by scope:**
 
 **A) Single File** (target is a file path like `src/utils.ts`, `lib/helpers.js`)
 → `/refactor:fast <target>`
@@ -35,6 +41,7 @@ argument-hint: [target]
 
 **F) Ambiguous** (cannot determine scope from arguments)
 → Use `AskUserQuestion` with options:
+  - "/refactor:review — Read-only analysis report"
   - "/refactor:fast — Quick autonomous refactoring"
   - "/refactor:plan — Brainstorm & plan first"
   - "/refactor:implement — Execute with review-then-apply"

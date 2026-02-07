@@ -18,16 +18,23 @@ Systematic approach to improving code structure while preserving behavior. Follo
 
 ### 1. Analyze — Detect Code Smells
 
-Before changing anything, scan the code and identify smells. See `references/code-smells.md` for the full catalog organized by category.
+Before changing anything, scan the code and identify smells.
+
+**Load these references during analysis:**
+- `references/code-smells.md` — structural smell catalog by category
+- `references/metrics.md` — quantitative scoring (complexity, coupling, size thresholds)
+- `references/security-smells.md` — security-relevant patterns (OWASP, secrets, language-specific)
+- `references/prioritization.md` — ROI-based ranking to decide fix order
 
 **Priority order for fixing smells:**
-1. Correctness risks (mutable default args, unclosed resources)
-2. High-impact structural smells (God Class, Long Method, Feature Envy)
-3. Duplication (DRY violations, copy-paste patterns)
-4. Naming and readability issues
-5. Minor style issues
+1. Security vulnerabilities (Critical/High from security-smells.md)
+2. Correctness risks (mutable default args, unclosed resources)
+3. High-impact structural smells (God Class, Long Method, Feature Envy)
+4. Duplication (DRY violations, copy-paste patterns)
+5. Naming and readability issues
+6. Minor style issues
 
-Report findings to the user with severity (critical/major/minor) before proceeding.
+Score findings using metrics.md thresholds, then rank with prioritization.md. Report findings to the user with severity (critical/major/minor) before proceeding.
 
 ### 2. Safeguard — Ensure Tests Exist Before Refactoring
 

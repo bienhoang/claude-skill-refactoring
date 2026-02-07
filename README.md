@@ -18,6 +18,9 @@ When you ask Claude Code to refactor your code, this skill guides it through a s
 |------|----------|
 | `references/code-smells.md` | 25+ code smells organized by category (Bloaters, OO Abusers, Change Preventers, Dispensables, Couplers, Complexity, Naming) |
 | `references/refactoring-methods.md` | 30+ refactoring techniques with step-by-step mechanics |
+| `references/metrics.md` | Quantitative thresholds — cyclomatic/cognitive complexity, coupling, cohesion, size limits |
+| `references/security-smells.md` | OWASP Top 10 code patterns, hardcoded secrets detection, language-specific security risks |
+| `references/prioritization.md` | ROI scoring formula, Fix/Defer/Accept decision tree, quick-win identification |
 | `references/languages/` | Per-language refactoring patterns with convention discovery (Python, JS/TS, Java, Go, Rust, PHP, Ruby, C#, Swift, Kotlin, C/C++, Dart, Scala, Elixir, Shell/Bash, Lua) |
 
 ## Installation
@@ -60,14 +63,26 @@ Once installed, the skill activates automatically when you ask Claude Code to re
 
 ## Slash Commands
 
-Once installed, you get four slash commands:
+Once installed, you get five slash commands:
 
 ### `/refactor [target]` — Intelligent Router
 
-Automatically detects the best approach based on scope:
+Automatically detects the best approach based on intent and scope:
+- Review/analyze/audit keywords → routes to `/refactor:review`
 - Single file → routes to `/refactor:fast`
 - Directory or module → routes to `/refactor:plan`
 - Plan file path → routes to `/refactor:implement`
+
+### `/refactor:review [target]` — Read-Only Analysis
+
+Scan code for smells, score with quantitative metrics, and generate a prioritized report. No code modifications.
+
+**Examples:**
+```
+/refactor:review src/utils.ts
+/refactor:review src/services/
+/refactor:review src/legacy/ "focus on security"
+```
 
 ### `/refactor:fast [target] [flags]` — Autonomous Refactoring
 
@@ -117,6 +132,9 @@ Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` 
 └── references/
     ├── code-smells.md                # Smell catalog (loaded when analyzing)
     ├── refactoring-methods.md        # Method catalog (loaded when transforming)
+    ├── metrics.md                    # Quantitative scoring thresholds
+    ├── security-smells.md            # Security pattern detection
+    ├── prioritization.md             # ROI-based fix ordering
     └── languages/                    # Per-language patterns with convention discovery
         ├── _index.md                 # Language routing (extensions → file mapping)
         ├── python.md
@@ -139,6 +157,7 @@ Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` 
 ~/.claude/commands/
 ├── refactor.md                       # Router (intelligent routing)
 └── refactor/
+    ├── review.md                     # /refactor:review (read-only analysis)
     ├── fast.md                       # /refactor:fast
     ├── plan.md                       # /refactor:plan
     └── implement.md                  # /refactor:implement

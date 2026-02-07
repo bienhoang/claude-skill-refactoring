@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.0.0] - 2026-02-08
+
+### Added
+- **`references/metrics.md`** — Quantitative code metrics with NIST/SonarQube thresholds for cyclomatic complexity, cognitive complexity, coupling (Ca/Ce/I/D), cohesion (LCOM-HS), and size limits (method/class/file/parameters). Includes YAML quick-reference block for AI consumption.
+- **`references/security-smells.md`** — OWASP Top 10 mapped to detectable code patterns, hardcoded secrets regex patterns (AWS, GitHub, OpenAI keys), language-specific security smells (Python, JS/TS, SQL, Java, Go), severity mapping (Critical/High/Medium/Low).
+- **`references/prioritization.md`** — ROI-based scoring formula `(Severity x Frequency x Impact) / Effort`, Fix/Defer/Accept decision tree with score thresholds, CodeScene hotspot model, SonarQube Technical Debt Ratio (A-E), agent checklist for consistent prioritization.
+- **`/refactor:review`** slash command — Read-only code analysis that scans, scores, and generates prioritized report without modifying code. Loads all 4 reference catalogs.
+- Router now detects review/analyze/audit/scan keywords and routes to `/refactor:review`
+
+### Changed
+- SKILL.md Analyze phase now loads metrics.md, security-smells.md, and prioritization.md alongside code-smells.md
+- **Breaking:** Priority order updated — security vulnerabilities now ranked #1 above correctness risks. Refactoring output may differ from v1.x for codebases with security smells.
+- Version bump: 1.2.0 → 2.0.0
+
 ## [1.2.0] - 2026-02-06
 
 ### Added
