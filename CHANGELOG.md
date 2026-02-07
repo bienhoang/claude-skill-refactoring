@@ -16,13 +16,17 @@
 - **Parallel refactoring** support in SKILL.md and `/refactor:fast` — detect independent tasks via dependency graph, batch execution, merge + full test verification
 - **Project Configuration** (`.refactoring-config.json`) — optional project-level customization: custom thresholds, custom smells, ignore patterns, severity overrides. Missing fields use defaults; no config file = backward compatible.
 - **Session History** (`.refactoring-history.json`) — append-only trend tracking across refactoring sessions. Stores smells found/fixed, methods applied, before/after metrics. Trend display (improving/stable/declining) at start of Analyze.
+- **`references/ci-integration.md`** — GitHub Actions multi-stage pipeline example (lint → test → analyze → gate), pre-commit hooks (husky + lint-staged), quality gate definitions (hard blocks: critical bugs, security CVSS >7.0; soft blocks: minor smells, low coverage), integration guidance for `/refactor:review` as PR quality check.
+- **Structured Report Template** in SKILL.md — Mermaid dependency graph for multi-file targets, severity summary table, before/after metrics comparison table. Optional save to `./reports/`.
+- **Context Optimization** section in SKILL.md — large file strategy (>500 lines: scan signatures first), progressive deepening (scan → surface → deep dive), chunking at logical boundaries, reference loading guidance.
+- **Visual reports** in `/refactor:review` — Mermaid dependency graph, structured report template, save-to-file option.
 
 ### Changed
 - SKILL.md Analyze phase now loads metrics.md, security-smells.md, and prioritization.md alongside code-smells.md
 - **Breaking:** Priority order updated — security vulnerabilities now ranked #1 above correctness risks. Refactoring output may differ from v1.x for codebases with security smells.
 - SKILL.md Transform phase conditionally loads design-patterns.md (architectural smells) and dependency-analysis.md (multi-file refactoring)
 - `/refactor:plan` Scout step now maps import graph and suggests feature branch; Brainstorm step consults design-patterns.md and migration-patterns.md
-- `/refactor:fast` now suggests git stash/commit, includes parallel refactoring check for directory targets
+- `/refactor:fast` now suggests git stash/commit, includes parallel refactoring check for directory targets, priority order now matches SKILL.md (security first)
 - `/refactor:implement` now suggests conventional commit after each successful transformation
 - SKILL.md Transform phase conditionally loads migration-patterns.md for paradigm migrations
 - SKILL.md Analyze phase now loads `.refactoring-config.json` (custom thresholds, ignore patterns) and `.refactoring-history.json` (trend display) if they exist
@@ -30,6 +34,7 @@
 - `/refactor:fast` loads config after Scout, writes history in Report
 - `/refactor:review` loads config after Scout, displays trend in report (read-only — no history write)
 - `/refactor:implement` loads config before transformations, writes history in Report
+- `/refactor:plan` loads config before analysis (custom thresholds apply to planning)
 - Version bump: 1.2.0 → 2.0.0
 
 ## [1.2.0] - 2026-02-06

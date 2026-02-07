@@ -9,6 +9,9 @@ Activate `refactoring` skill.
 Execute refactoring transformations with test verification:
 <target>$ARGUMENTS</target>
 
+## Config & History
+Load `.refactoring-config.json` if it exists — apply custom thresholds and ignore patterns. If `.refactoring-history.json` exists, display trend before starting. If JSON parse fails, warn and continue with defaults.
+
 ## Mode Detection
 
 **Check `$ARGUMENTS` to determine mode:**
@@ -48,9 +51,6 @@ If `$ARGUMENTS` is a file/directory path (not a plan) or no plan detected:
    - Use `code-reviewer` subagent to review changes
    - Present review results to user
 7. Report summary
-
-## Config & History
-Load `.refactoring-config.json` if it exists — apply custom thresholds and ignore patterns. If `.refactoring-history.json` exists, display trend before starting. If JSON parse fails, warn and continue with defaults.
 
 ## Transformation Rules
 - **One refactoring at a time** — never batch without intermediate verification

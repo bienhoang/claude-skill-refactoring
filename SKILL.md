@@ -121,12 +121,39 @@ After each transformation:
 
 ### 5. Report — Summarize Changes
 
-Present to the user:
-- Code smells found (with severity)
-- Refactoring methods applied and why
-- Before/after comparison of key metrics (complexity, duplication, line count)
-- Test results summary
-- Any remaining smells or suggested follow-up refactorings
+Present to the user using this structure:
+
+```
+## Refactoring Report: [target]
+
+### Dependency Graph (multi-file targets only)
+​```mermaid
+graph LR
+  A[ModuleA] --> B[ModuleB]
+  B --> C[ModuleC]
+​```
+
+### Severity Summary
+| Severity | Count | Status |
+|----------|-------|--------|
+| Critical | 0 | Resolved |
+| Major | 3 | 2 Resolved, 1 Remaining |
+| Minor | 5 | 3 Resolved, 2 Deferred |
+
+### Metrics (Before → After)
+| Metric | Before | After | Change |
+|--------|--------|-------|--------|
+| Avg Cyclomatic | 18 | 11 | -39% |
+| Lines of Code | 450 | 380 | -16% |
+
+### Methods Applied
+[List each refactoring technique and why it was chosen]
+
+### Remaining Smells
+[Any deferred or new issues for follow-up]
+```
+
+Optionally offer to save report to `./reports/refactoring-report-{YYYY-MM-DD-HHMM}.md`.
 
 **Session history:** Append session entry to `.refactoring-history.json` (create file if it doesn't exist). Include timestamp, target, command, smells found/fixed counts, methods applied, and before/after metrics.
 
@@ -141,7 +168,7 @@ Before analyzing code, detect language conventions:
 5. Use discovered conventions throughout analysis and transformation phases
 6. Output two sections: **Aligned Refactorings** (respect conventions) + **Convention Improvements** (suggest better practices with reasoning)
 
-Read the appropriate language file(s) from `references/languages/` for language-specific refactoring patterns covering Python, JavaScript/TypeScript, Java, Go, Rust, PHP, Ruby, C#, Swift, and Kotlin.
+Read the appropriate language file(s) from `references/languages/` for language-specific refactoring patterns covering 16 languages: Python, JS/TS, Java, Go, Rust, PHP, Ruby, C#, Swift, Kotlin, C/C++, Dart, Scala, Elixir, Shell/Bash, and Lua.
 
 ## Git Strategy
 
@@ -207,6 +234,16 @@ Optional trend tracking via `.refactoring-history.json` in project root (suggest
 **Reading:** At start of Analyze, if history exists, display trend summary: "Previous session: X smells found, Y fixed. Trend: [improving/stable/declining]." Trend logic compares last two sessions: improving = smells_found decreased, stable = within ±20%, declining = smells_found increased.
 **Writing:** At end of Report, append session entry. Create file if it doesn't exist.
 **Append-only.** Never delete entries. Git-friendly (one entry per session).
+
+## Context Optimization
+
+Strategies for efficient analysis of large codebases:
+
+- **Large files (>500 lines):** Prefer reading structure first — scan for `class `, `def `, `function `, `export` signatures to build a map. Identify hotspots by size and nesting depth, then deep-dive on flagged sections.
+- **Progressive deepening:** Scan (signatures + line counts) → Surface (first-pass smell count per section) → Deep dive (full analysis on worst-scoring sections).
+- **Chunking:** Prefer splitting at logical boundaries (class, module, function). Avoid splitting mid-function when possible.
+- **Reference loading:** Load `code-smells.md` for all analyses. Load other references only when their domain is relevant. Prefer loading 1 reference thoroughly over 3 partially.
+- **Multi-file targets:** Build file list first, then analyze in priority order (largest/most-imported files first). Focus on key findings rather than exhaustively scanning every file.
 
 ## Decision Rules
 

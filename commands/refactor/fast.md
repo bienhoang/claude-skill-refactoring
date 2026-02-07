@@ -32,10 +32,11 @@ Load `.refactoring-config.json` if it exists — apply custom thresholds and ign
 Load `references/code-smells.md`. Scan target code for smells silently (do not report to user — this is fast mode).
 
 Prioritize by severity:
-1. Correctness risks
-2. High-impact structural smells (God Class, Long Method, Feature Envy)
-3. Duplication (DRY violations)
-4. Naming and readability
+1. Security vulnerabilities (Critical/High)
+2. Correctness risks
+3. High-impact structural smells (God Class, Long Method, Feature Envy)
+4. Duplication (DRY violations)
+5. Naming and readability
 
 ### 3. Safeguard
 Based on flag mode:

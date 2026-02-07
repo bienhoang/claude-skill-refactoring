@@ -46,6 +46,13 @@ Present findings to user in this format:
 ```
 ## Code Review: [target]
 
+### Dependency Graph (multi-file targets only)
+​```mermaid
+graph LR
+  A[ModuleA] --> B[ModuleB]
+  B --> C[ModuleC]
+​```
+
 ### Summary
 - Files scanned: N
 - Total findings: N (X critical, Y major, Z minor)
@@ -66,6 +73,9 @@ Present findings to user in this format:
 ### Metrics Snapshot
 [Key metric values for the worst-scoring areas]
 
+### Convention Discoveries
+[Detected conventions: linter, formatter, framework, test runner]
+
 ### Trend (if history exists)
 [Comparison with previous session: smells improving/stable/declining]
 
@@ -74,6 +84,8 @@ Present findings to user in this format:
 - Tier 2 (Strategic): [summary]
 - Tier 3 (Planned): [summary]
 ```
+
+Offer to save report to `./reports/review-report-{YYYY-MM-DD-HHMM}.md`.
 
 **Note:** Review is read-only — do not write to `.refactoring-history.json`. Only code-modifying commands (`/refactor:fast` and `/refactor:implement`) write history entries.
 

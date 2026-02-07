@@ -19,6 +19,9 @@ Load `references/dependency-analysis.md`. Map import graph for target modules an
 
 Suggest creating a feature branch: "Consider creating a branch: `git checkout -b refactor/<target-name>` for this planned refactoring."
 
+### 1.5. Config
+Load `.refactoring-config.json` if it exists — apply custom thresholds and ignore patterns to subsequent analysis. If invalid JSON, warn and continue with defaults.
+
 ### 2. Analyze
 Load `references/code-smells.md`. Perform thorough analysis:
 - Scan all target files for code smells
