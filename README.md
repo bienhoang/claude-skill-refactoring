@@ -125,6 +125,31 @@ Execute a refactoring plan phase by phase, or review-then-apply without a plan.
 /refactor:implement src/utils.ts
 ```
 
+## Configuration (optional)
+
+Create `.refactoring-config.json` in your project root to customize analysis:
+
+```json
+{
+  "thresholds": { "max_method_lines": 30, "max_cyclomatic_complexity": 12 },
+  "custom_smells": [{ "name": "Raw SQL", "pattern": "query.*\\+", "severity": "critical" }],
+  "ignore_patterns": ["**/generated/**", "**/migrations/**", "**/vendor/**"],
+  "severity_overrides": { "Long Method": "minor" }
+}
+```
+
+All fields are optional. Missing fields use defaults from `references/metrics.md`. No config file = default behavior.
+
+## History Tracking (optional)
+
+The skill automatically appends session entries to `.refactoring-history.json` after each refactoring run (not after review-only). This enables trend tracking across sessions:
+
+```
+Previous session: 15 smells found, 12 fixed. Trend: improving
+```
+
+Consider adding `.refactoring-history.json` to `.gitignore` if you don't want to track it in version control.
+
 ## How it works
 
 Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` (project). This package copies the skill files and slash commands to the appropriate locations on `npm install` and removes them on `npm uninstall`.

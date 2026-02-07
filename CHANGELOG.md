@@ -14,6 +14,8 @@
 - **Git Strategy** section in SKILL.md — suggest-only git practices: stash before start, commit-per-refactoring, conventional commits (`refactor:` prefix), feature branch for plans, squash option
 - **Advanced testing strategies** in Safeguard phase — property-based testing (Hypothesis, fast-check), snapshot/approval testing, contract testing, mutation testing awareness (mutmut, Stryker)
 - **Parallel refactoring** support in SKILL.md and `/refactor:fast` — detect independent tasks via dependency graph, batch execution, merge + full test verification
+- **Project Configuration** (`.refactoring-config.json`) — optional project-level customization: custom thresholds, custom smells, ignore patterns, severity overrides. Missing fields use defaults; no config file = backward compatible.
+- **Session History** (`.refactoring-history.json`) — append-only trend tracking across refactoring sessions. Stores smells found/fixed, methods applied, before/after metrics. Trend display (improving/stable/declining) at start of Analyze.
 
 ### Changed
 - SKILL.md Analyze phase now loads metrics.md, security-smells.md, and prioritization.md alongside code-smells.md
@@ -23,6 +25,11 @@
 - `/refactor:fast` now suggests git stash/commit, includes parallel refactoring check for directory targets
 - `/refactor:implement` now suggests conventional commit after each successful transformation
 - SKILL.md Transform phase conditionally loads migration-patterns.md for paradigm migrations
+- SKILL.md Analyze phase now loads `.refactoring-config.json` (custom thresholds, ignore patterns) and `.refactoring-history.json` (trend display) if they exist
+- SKILL.md Report phase now appends session entry to `.refactoring-history.json`
+- `/refactor:fast` loads config after Scout, writes history in Report
+- `/refactor:review` loads config after Scout, displays trend in report (read-only — no history write)
+- `/refactor:implement` loads config before transformations, writes history in Report
 - Version bump: 1.2.0 → 2.0.0
 
 ## [1.2.0] - 2026-02-06

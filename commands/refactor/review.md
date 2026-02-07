@@ -19,6 +19,9 @@ Scan target code for smells, score severity with quantitative metrics, and gener
 ### 1. Scout
 Use `scout` subagent to read target files/directories and understand code structure. If scout is unavailable, fall back to Glob + Read tools to gather the same information directly.
 
+### 1.5. Config & History
+Load `.refactoring-config.json` if it exists — apply custom thresholds, ignore patterns, and custom smells to subsequent analysis. If `.refactoring-history.json` exists, include trend comparison in the final report. If either file has invalid JSON, warn and continue with defaults.
+
 ### 2. Detect Language
 Load `references/languages/_index.md`, identify language file(s), load them, execute Discovery section to detect project conventions.
 
@@ -63,11 +66,16 @@ Present findings to user in this format:
 ### Metrics Snapshot
 [Key metric values for the worst-scoring areas]
 
+### Trend (if history exists)
+[Comparison with previous session: smells improving/stable/declining]
+
 ### Recommended Next Steps
 - Tier 1 (Quick Wins): [summary]
 - Tier 2 (Strategic): [summary]
 - Tier 3 (Planned): [summary]
 ```
+
+**Note:** Review is read-only — do not write to `.refactoring-history.json`. Only code-modifying commands (`/refactor:fast` and `/refactor:implement`) write history entries.
 
 ## Empty Arguments
 If `$ARGUMENTS` is empty, use `AskUserQuestion`:

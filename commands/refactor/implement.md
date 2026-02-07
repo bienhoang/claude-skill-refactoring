@@ -49,6 +49,9 @@ If `$ARGUMENTS` is a file/directory path (not a plan) or no plan detected:
    - Present review results to user
 7. Report summary
 
+## Config & History
+Load `.refactoring-config.json` if it exists — apply custom thresholds and ignore patterns. If `.refactoring-history.json` exists, display trend before starting. If JSON parse fails, warn and continue with defaults.
+
 ## Transformation Rules
 - **One refactoring at a time** — never batch without intermediate verification
 - **Preserve behavior** — external observable behavior must not change
@@ -65,5 +68,8 @@ Present to user:
 - Refactoring methods applied and why
 - Before/after metrics (complexity, duplication, line count)
 - Test results summary
+- Trend comparison (if history exists)
 - Remaining smells or suggested follow-ups
 - If plan mode: next phase recommendation
+
+Append session entry to `.refactoring-history.json` (create if it doesn't exist).

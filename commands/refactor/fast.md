@@ -25,6 +25,9 @@ Use `scout` subagent to read target files/directories and understand code struct
 ### 1.5. Git Prep
 If uncommitted changes detected, suggest stashing: "Uncommitted changes found. Suggest running `git stash --include-untracked` before refactoring." Proceed regardless of user's choice — this is a suggestion only.
 
+### 1.7. Config & History
+Load `.refactoring-config.json` if it exists — apply custom thresholds and ignore patterns to subsequent analysis. If `.refactoring-history.json` exists, note trend silently (used in Report). If either file has invalid JSON, warn and continue with defaults.
+
 ### 2. Analyze
 Load `references/code-smells.md`. Scan target code for smells silently (do not report to user — this is fast mode).
 
@@ -69,7 +72,10 @@ Present summary to user:
 - Refactoring methods applied and why
 - Before/after key metrics (complexity, duplication, line count)
 - Test results summary
+- Trend comparison (if history exists): "vs last session: complexity ↓12%, smells ↓3"
 - Remaining smells or suggested follow-ups
+
+Append session entry to `.refactoring-history.json` (create if it doesn't exist).
 
 ## Safety Rules
 - Never batch multiple refactorings without intermediate verification

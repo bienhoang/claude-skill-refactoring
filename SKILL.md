@@ -20,6 +20,10 @@ Systematic approach to improving code structure while preserving behavior. Follo
 
 Before changing anything, scan the code and identify smells.
 
+**Load project config and history (if they exist):**
+- If `.refactoring-config.json` exists: load it, apply custom thresholds (override metrics.md defaults), add custom smells to detection, skip files matching `ignore_patterns`
+- If `.refactoring-history.json` exists: display trend summary to user before analysis
+
 **Load these references during analysis:**
 - `references/code-smells.md` — structural smell catalog by category
 - `references/metrics.md` — quantitative scoring (complexity, coupling, size thresholds)
@@ -124,6 +128,8 @@ Present to the user:
 - Test results summary
 - Any remaining smells or suggested follow-up refactorings
 
+**Session history:** Append session entry to `.refactoring-history.json` (create file if it doesn't exist). Include timestamp, target, command, smells found/fixed counts, methods applied, and before/after metrics.
+
 ## Language-Specific Guidance
 
 ### Discovery Workflow
@@ -161,6 +167,46 @@ For directory-level refactoring with many independent tasks:
 5. **Fallback:** If dependency analysis is unavailable or unclear, default to sequential execution
 
 Only parallelize when: target is a directory/module (not single file), 3+ independent tasks identified, and no shared file dependencies within batches.
+
+## Project Configuration
+
+Optional project-level customization via `.refactoring-config.json` in project root:
+
+```json
+{
+  "thresholds": { "max_method_lines": 30, "max_cyclomatic_complexity": 12 },
+  "custom_smells": [{ "name": "Raw SQL", "pattern": "query.*\\+", "severity": "critical" }],
+  "ignore_patterns": ["**/generated/**", "**/migrations/**", "**/vendor/**"],
+  "severity_overrides": { "Long Method": "minor" }
+}
+```
+
+**Loading:** At start of Analyze (after Scout), check for this file. If found, apply custom thresholds (override metrics.md defaults), add custom smells to detection list, skip files matching ignore patterns during analysis. Scout still reads broadly for context — ignore patterns filter analysis results, not discovery. Missing fields use defaults.
+**Validation:** Warn on invalid JSON or unrecognized fields, continue with valid fields + defaults. Thresholds must be positive integers. Severity values must be `critical`, `major`, or `minor`.
+**No config file = current behavior.** This feature is fully backward compatible.
+
+## Session History
+
+Optional trend tracking via `.refactoring-history.json` in project root (suggest adding to `.gitignore`):
+
+```json
+{
+  "version": 1,
+  "sessions": [{
+    "timestamp": "2026-02-08T10:30:00Z",
+    "target": "src/services/",
+    "command": "refactor:fast",
+    "smells_found": { "critical": 2, "major": 5, "minor": 8 },
+    "smells_fixed": { "critical": 2, "major": 4, "minor": 3 },
+    "methods_applied": ["Extract Method", "Move Method"],
+    "metrics": { "before": { "avg_complexity": 18 }, "after": { "avg_complexity": 11 } }
+  }]
+}
+```
+
+**Reading:** At start of Analyze, if history exists, display trend summary: "Previous session: X smells found, Y fixed. Trend: [improving/stable/declining]." Trend logic compares last two sessions: improving = smells_found decreased, stable = within ±20%, declining = smells_found increased.
+**Writing:** At end of Report, append session entry. Create file if it doesn't exist.
+**Append-only.** Never delete entries. Git-friendly (one entry per session).
 
 ## Decision Rules
 
