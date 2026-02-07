@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.0.0] - 2026-02-08
+
+### Added
+- **Unified YAML config** (`.refactoring.yaml`) — single config file for all overrides, replacing `.refactoring-config.json`
+- `workflow` config section — skip phases (`safeguard`/`verify`/`report`), toggle parallel refactoring, git suggestions, history tracking, report format (`markdown`/`minimal`), auto-save reports
+- `commands` config section — per-command defaults: `fast.default_flags`, `review.save_report`, `plan.branch_prefix`, `implement.commit_per_step`
+- `priority` config section — tune ROI formula weights (`severity_weight`, `frequency_weight`, `impact_weight`, `effort_divisor`)
+- Config precedence rule: CLI flags > `.refactoring.yaml` > skill defaults
+- Migration guide in README for v2 → v3 users
+
+### Changed
+- **Breaking:** Config format changed from `.refactoring-config.json` (JSON) to `.refactoring.yaml` (YAML)
+- **Breaking:** `ignore_patterns` field renamed to `ignore`
+- SKILL.md "Project Configuration" section fully rewritten with YAML schema, workflow overrides, command defaults, priority weights subsections
+- All slash commands (`fast`, `review`, `plan`, `implement`) now load unified YAML config
+- Git Strategy, Parallel Refactoring, Session History sections now respect `workflow.*` config toggles
+- Version bump: 2.0.0 → 3.0.0
+
+### Removed
+- `.refactoring-config.json` support — use `.refactoring.yaml` instead
+
 ## [2.0.0] - 2026-02-08
 
 ### Added

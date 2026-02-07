@@ -10,7 +10,17 @@ Execute refactoring transformations with test verification:
 <target>$ARGUMENTS</target>
 
 ## Config & History
-Load `.refactoring-config.json` if it exists — apply custom thresholds and ignore patterns. If `.refactoring-history.json` exists, display trend before starting. If JSON parse fails, warn and continue with defaults.
+Load `.refactoring.yaml` if it exists:
+- Apply `thresholds` (override metrics.md defaults)
+- Apply `ignore` patterns (filter analysis results)
+- Apply `custom_smells` (add to detection)
+- Apply `severity_overrides`
+- Apply `workflow` settings to control phases and features
+- Apply `commands.implement` defaults (commit_per_step)
+- Apply `priority` weights to ROI formula
+If `.refactoring-history.json` exists and `workflow.history_tracking` is not `false`, display trend before starting.
+If YAML is malformed, warn and continue with defaults.
+**Precedence:** CLI flags > `.refactoring.yaml` > skill defaults.
 
 ## Mode Detection
 
@@ -22,16 +32,17 @@ If `$ARGUMENTS` is a path to a plan `.md` file, or if an active refactoring plan
 2. Load `plan.md`, detect next incomplete phase (prefer IN_PROGRESS, then earliest Planned). If all phases DONE → report "All phases complete" and stop.
 3. Read phase file → extract transformation tasks
 4. Initialize TodoWrite with all transformation steps
-5. **For each transformation:**
+5. **Safeguard**: If `workflow.skip_phases` contains `safeguard`, emit "⚠️ Safeguard phase skipped by config — no test safety net." and skip. Otherwise, check for existing tests and run baseline.
+6. **For each transformation:**
    a. Apply single refactoring technique (from phase's Transformation Sequence)
-   b. Run tests (auto-detect: pytest, jest/vitest, go test, cargo test, etc.)
+   b. **Verify**: If `workflow.skip_phases` contains `verify`, skip test verification. Otherwise, run tests (auto-detect: pytest, jest/vitest, go test, cargo test, etc.)
    c. If fail → **revert using `git restore <changed-files>`**, report to user, ask whether to continue or stop
-   d. If pass → suggest committing: `git commit -m 'refactor: <technique-applied> in <file>'`, then proceed to next
-5. After all transformations in phase complete:
+   d. If pass and `commands.implement.commit_per_step` is not `false` and `workflow.git_suggestions` is not `false` → suggest committing: `git commit -m 'refactor: <technique-applied> in <file>'`, then proceed to next
+7. After all transformations in phase complete:
    - Use `code-reviewer` subagent to review changes
    - Present review results to user
    - Update phase status to DONE in plan
-6. Report summary: transformations applied, tests passed, smells resolved
+8. Report summary: transformations applied, tests passed, smells resolved
 
 ### Mode B: Standalone (Review-then-Apply)
 If `$ARGUMENTS` is a file/directory path (not a plan) or no plan detected:
@@ -42,15 +53,16 @@ If `$ARGUMENTS` is a file/directory path (not a plan) or no plan detected:
    - Show smells found with severity
    - Show proposed transformations with expected impact
    - Options: "Apply all", "Select which to apply", "Cancel"
-5. On confirmation → apply transformations one at a time:
+5. **Safeguard**: If `workflow.skip_phases` contains `safeguard`, emit warning and skip. Otherwise, check for existing tests and run baseline.
+6. On confirmation → apply transformations one at a time:
    a. Apply single refactoring
-   b. Run tests (auto-detect: pytest, jest/vitest, go test, cargo test, etc.)
+   b. **Verify**: If `workflow.skip_phases` contains `verify`, skip. Otherwise, run tests (auto-detect: pytest, jest/vitest, go test, cargo test, etc.)
    c. If fail → **revert using `git restore <changed-files>`**, report, continue to next
-   d. If pass → suggest committing: `git commit -m 'refactor: <technique-applied> in <file>'`, then proceed
-6. After all transformations:
+   d. If pass and `commands.implement.commit_per_step` is not `false` and `workflow.git_suggestions` is not `false` → suggest committing: `git commit -m 'refactor: <technique-applied> in <file>'`, then proceed
+7. After all transformations:
    - Use `code-reviewer` subagent to review changes
    - Present review results to user
-7. Report summary
+8. Report summary
 
 ## Transformation Rules
 - **One refactoring at a time** — never batch without intermediate verification
@@ -63,6 +75,8 @@ If `$ARGUMENTS` is a file/directory path (not a plan) or no plan detected:
 - If a subagent (scout, tester, code-reviewer) fails → report error to user and ask how to proceed
 
 ## Report
+If `workflow.skip_phases` contains `report` in config: skip report output (still write history unless disabled).
+
 Present to user:
 - Smells found vs resolved
 - Refactoring methods applied and why
@@ -72,4 +86,7 @@ Present to user:
 - Remaining smells or suggested follow-ups
 - If plan mode: next phase recommendation
 
-Append session entry to `.refactoring-history.json` (create if it doesn't exist).
+If `workflow.report_format` is `minimal`: output severity counts + metrics table only.
+If `workflow.save_reports` is `true`: auto-save report to `./reports/` without prompting.
+
+If `workflow.history_tracking` is not `false`, append session entry to `.refactoring-history.json` (create if it doesn't exist).

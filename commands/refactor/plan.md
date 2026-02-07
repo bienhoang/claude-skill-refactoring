@@ -17,10 +17,19 @@ Use `scout` subagent to read target files/directories and map code structure, de
 
 Load `references/dependency-analysis.md`. Map import graph for target modules and identify circular dependencies before planning phases.
 
-Suggest creating a feature branch: "Consider creating a branch: `git checkout -b refactor/<target-name>` for this planned refactoring."
+If `workflow.git_suggestions` is not `false` in config: suggest creating a feature branch: "Consider creating a branch: `git checkout -b {prefix}<target-name>` for this planned refactoring." Use `commands.plan.branch_prefix` from config if set (default: `refactor/`).
 
 ### 1.5. Config
-Load `.refactoring-config.json` if it exists — apply custom thresholds and ignore patterns to subsequent analysis. If invalid JSON, warn and continue with defaults.
+Load `.refactoring.yaml` if it exists:
+- Apply `thresholds` (override metrics.md defaults)
+- Apply `ignore` patterns (filter analysis results)
+- Apply `custom_smells` (add to detection)
+- Apply `severity_overrides`
+- Apply `commands.plan` defaults (branch_prefix)
+- Apply `priority` weights to ROI formula
+If YAML is malformed, warn and continue with defaults.
+**Precedence:** CLI flags > `.refactoring.yaml` > skill defaults.
+Note: `workflow.skip_phases` does not apply to plan command (planning only, no execution phases).
 
 ### 2. Analyze
 Load `references/code-smells.md`. Perform thorough analysis:

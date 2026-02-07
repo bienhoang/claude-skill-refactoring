@@ -20,7 +20,17 @@ Scan target code for smells, score severity with quantitative metrics, and gener
 Use `scout` subagent to read target files/directories and understand code structure. If scout is unavailable, fall back to Glob + Read tools to gather the same information directly.
 
 ### 1.5. Config & History
-Load `.refactoring-config.json` if it exists — apply custom thresholds, ignore patterns, and custom smells to subsequent analysis. If `.refactoring-history.json` exists, include trend comparison in the final report. If either file has invalid JSON, warn and continue with defaults.
+Load `.refactoring.yaml` if it exists:
+- Apply `thresholds` (override metrics.md defaults)
+- Apply `ignore` patterns (filter analysis results)
+- Apply `custom_smells` (add to detection)
+- Apply `severity_overrides`
+- Apply `workflow` settings (report_format, save_reports, history_tracking)
+- Apply `commands.review` defaults (save_report)
+- Apply `priority` weights to ROI formula
+If `.refactoring-history.json` exists and `workflow.history_tracking` is not `false`, include trend comparison in the final report.
+If YAML is malformed, warn and continue with defaults.
+**Precedence:** CLI flags > `.refactoring.yaml` > skill defaults.
 
 ### 2. Detect Language
 Load `references/languages/_index.md`, identify language file(s), load them, execute Discovery section to detect project conventions.
@@ -38,7 +48,7 @@ Load `references/metrics.md`. For each flagged area, estimate:
 - Coupling and cohesion indicators (where observable)
 
 ### 6. Prioritize
-Load `references/prioritization.md`. Score each finding using `(Severity x Frequency x Impact) / Effort`. Sort by score descending. Group into tiers.
+Load `references/prioritization.md`. Score each finding using `(Severity*sw x Frequency*fw x Impact*iw) / (Effort*ed)` where weights come from `priority` config (default: all 1). Sort by score descending. Group into tiers.
 
 ### 7. Report
 Present findings to user in this format:
@@ -85,7 +95,9 @@ graph LR
 - Tier 3 (Planned): [summary]
 ```
 
-Offer to save report to `./reports/review-report-{YYYY-MM-DD-HHMM}.md`.
+If `commands.review.save_report` is `true` in config or `workflow.save_reports` is `true`: auto-save report to `./reports/review-report-{YYYY-MM-DD-HHMM}.md`.
+If `workflow.report_format` is `minimal`: output severity counts + metrics table only.
+Otherwise, offer to save report to `./reports/review-report-{YYYY-MM-DD-HHMM}.md`.
 
 **Note:** Review is read-only — do not write to `.refactoring-history.json`. Only code-modifying commands (`/refactor:fast` and `/refactor:implement`) write history entries.
 

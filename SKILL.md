@@ -21,8 +21,8 @@ Systematic approach to improving code structure while preserving behavior. Follo
 Before changing anything, scan the code and identify smells.
 
 **Load project config and history (if they exist):**
-- If `.refactoring-config.json` exists: load it, apply custom thresholds (override metrics.md defaults), add custom smells to detection, skip files matching `ignore_patterns`
-- If `.refactoring-history.json` exists: display trend summary to user before analysis
+- If `.refactoring.yaml` exists: load it, apply config sections (see Project Configuration below for full schema and behavior)
+- If `.refactoring-history.json` exists and `workflow.history_tracking` is not `false` in config: display trend summary to user before analysis
 
 **Load these references during analysis:**
 - `references/code-smells.md` — structural smell catalog by category
@@ -181,7 +181,7 @@ Suggest (never force) these git practices to the user:
 - **After completion:** If work was stashed, remind user to `git stash pop`
 - **Squash option:** For many small commits, mention `git rebase -i` to squash before merging
 
-**Important:** These are suggestions only. Follow the user's existing git workflow. Never auto-stash, auto-commit, or auto-branch without user confirmation.
+**Important:** These are suggestions only. Follow the user's existing git workflow. Never auto-stash, auto-commit, or auto-branch without user confirmation. If `workflow.git_suggestions` is `false` in `.refactoring.yaml`, suppress all git suggestions in this section.
 
 ## Parallel Refactoring
 
@@ -193,24 +193,115 @@ For directory-level refactoring with many independent tasks:
 4. **Merge and verify:** Collect results, run full test suite to catch interaction issues
 5. **Fallback:** If dependency analysis is unavailable or unclear, default to sequential execution
 
-Only parallelize when: target is a directory/module (not single file), 3+ independent tasks identified, and no shared file dependencies within batches.
+Only parallelize when: target is a directory/module (not single file), 3+ independent tasks identified, and no shared file dependencies within batches. If `workflow.parallel` is `false` in `.refactoring.yaml`, always use sequential execution regardless of independence.
 
 ## Project Configuration
 
-Optional project-level customization via `.refactoring-config.json` in project root:
+Optional project-level customization via `.refactoring.yaml` in project root. All sections and fields are optional — missing fields use skill defaults. No config file = default behavior.
 
-```json
-{
-  "thresholds": { "max_method_lines": 30, "max_cyclomatic_complexity": 12 },
-  "custom_smells": [{ "name": "Raw SQL", "pattern": "query.*\\+", "severity": "critical" }],
-  "ignore_patterns": ["**/generated/**", "**/migrations/**", "**/vendor/**"],
-  "severity_overrides": { "Long Method": "minor" }
-}
+```yaml
+# .refactoring.yaml — all fields optional
+
+# Analysis thresholds (override metrics.md defaults)
+thresholds:
+  max_method_lines: 20       # default: ≤20 good, 20-50 acceptable, 50+ refactor
+  max_class_lines: 250       # default: 250 (good), 500+ triggers refactor
+  max_file_lines: 500        # default: 500 (good), 1000+ triggers split
+  max_parameters: 5          # default: 5, 6+ triggers refactor
+  max_cyclomatic_complexity: 10  # default: 10 (low risk), 25+ critical
+  max_cognitive_complexity: 10   # default: 10 (good), 15+ triggers refactor
+
+# Custom smell detectors (added to built-in catalog)
+custom_smells:
+  - name: "Raw SQL"
+    pattern: "query.*\\+"     # regex matched against code text
+    severity: critical         # critical | major | minor
+
+# File exclusion patterns (filter analysis results, not discovery)
+ignore:
+  - "**/generated/**"
+  - "**/migrations/**"
+  - "**/vendor/**"
+
+# Override built-in smell severity levels
+severity_overrides:
+  Long Method: minor
+  Duplicate Code: major
+
+# Workflow behavior
+workflow:
+  skip_phases: []             # safeguard | verify | report (analyze/transform not skippable)
+  parallel: true              # enable parallel refactoring for directory targets
+  git_suggestions: true       # suggest stash/commit/branch operations
+  history_tracking: true      # read/write .refactoring-history.json
+  report_format: markdown     # markdown (full) | minimal (metrics + counts only)
+  save_reports: false         # auto-save reports without prompting
+
+# Per-command defaults (CLI flags override these)
+commands:
+  fast:
+    default_flags: []         # e.g., ["--safe"] to always write characterization tests
+  review:
+    save_report: false        # auto-save review reports
+  plan:
+    branch_prefix: "refactor/"  # git branch prefix for suggestions
+  implement:
+    commit_per_step: true     # suggest commit after each transformation
+
+# Priority scoring weights (tune ROI formula)
+priority:
+  severity_weight: 1          # multiplier for Severity in formula
+  frequency_weight: 1         # multiplier for Frequency in formula
+  impact_weight: 1            # multiplier for Impact in formula
+  effort_divisor: 1           # multiplier for Effort divisor in formula
 ```
 
-**Loading:** At start of Analyze (after Scout), check for this file. If found, apply custom thresholds (override metrics.md defaults), add custom smells to detection list, skip files matching ignore patterns during analysis. Scout still reads broadly for context — ignore patterns filter analysis results, not discovery. Missing fields use defaults.
-**Validation:** Warn on invalid JSON or unrecognized fields, continue with valid fields + defaults. Thresholds must be positive integers. Severity values must be `critical`, `major`, or `minor`.
-**No config file = current behavior.** This feature is fully backward compatible.
+**Loading:** At start of Analyze (after Scout), check for `.refactoring.yaml`. If found, read as text and apply each section:
+- `thresholds` → override metrics.md default values
+- `custom_smells` → add to built-in smell detection list
+- `ignore` → filter analysis results (Scout still reads broadly for context)
+- `severity_overrides` → change built-in smell severity levels
+- `workflow` → control phase execution, features, and report behavior (see Workflow Overrides below)
+- `commands` → set per-command defaults (see Command Defaults below)
+- `priority` → tune ROI scoring formula weights (see Priority Weights below)
+
+**Validation:** Warn on malformed YAML or unrecognized fields, continue with valid fields + defaults. Thresholds must be positive numbers. Severity values must be `critical`, `major`, or `minor`. `skip_phases` values must be `safeguard`, `verify`, or `report`. Priority weights must be positive numbers (>0). `default_flags` must be a list of strings.
+
+**Precedence:** CLI flags > `.refactoring.yaml` > skill defaults. Explicit user input always wins.
+
+### Workflow Overrides
+
+When `.refactoring.yaml` contains a `workflow` section:
+
+- **`skip_phases`** — Skip named phases during refactoring. Only `safeguard`, `verify`, and `report` can be skipped. `analyze` and `transform` are always executed.
+  - If `safeguard` skipped: emit warning "⚠️ Safeguard phase skipped by config — no test safety net."
+  - If `verify` skipped: emit warning "⚠️ Verify phase skipped by config — changes not test-verified."
+  - If `report` skipped: still write session history (unless `history_tracking` is false).
+- **`parallel`** — When `false`, always use sequential execution even for directory targets with independent tasks.
+- **`git_suggestions`** — When `false`, suppress all git stash/commit/branch suggestions.
+- **`history_tracking`** — When `false`, do not read or write `.refactoring-history.json`.
+- **`report_format: minimal`** — Abbreviated report: severity counts + metrics table only (no dependency graph, no methods list, no remaining smells section).
+- **`save_reports`** — When `true`, auto-save reports to `./reports/` without prompting.
+
+### Command Defaults
+
+Per-command defaults from `commands` section are applied before CLI flags. CLI flags always win (explicit user intent overrides config).
+
+- **`commands.fast.default_flags`** — List of flags applied as if the user typed them. Example: `["--safe"]` makes every `/refactor:fast` run write characterization tests by default. If user passes `--no-tests` explicitly, it overrides `--safe` from config.
+- **`commands.review.save_report`** — When `true`, auto-save review reports without asking.
+- **`commands.plan.branch_prefix`** — Custom prefix for git branch suggestions (default: `refactor/`).
+- **`commands.implement.commit_per_step`** — When `false`, suppress commit suggestions after each transformation.
+
+### Priority Weights
+
+The ROI scoring formula from `references/prioritization.md` can be tuned via `priority` weights:
+
+```
+Default:  Score = (Severity x Frequency x Impact) / Effort
+Weighted: Score = (Severity*sw x Frequency*fw x Impact*iw) / (Effort*ed)
+```
+
+Where `sw`, `fw`, `iw`, `ed` are the weight values from config (all default to 1 = equal weight). Higher weight = more influence on final score. Example: `severity_weight: 3` triples severity's contribution to priority score.
 
 ## Session History
 
@@ -231,8 +322,8 @@ Optional trend tracking via `.refactoring-history.json` in project root (suggest
 }
 ```
 
-**Reading:** At start of Analyze, if history exists, display trend summary: "Previous session: X smells found, Y fixed. Trend: [improving/stable/declining]." Trend logic compares last two sessions: improving = smells_found decreased, stable = within ±20%, declining = smells_found increased.
-**Writing:** At end of Report, append session entry. Create file if it doesn't exist.
+**Reading:** At start of Analyze, if history exists and `workflow.history_tracking` is not `false` in `.refactoring.yaml`, display trend summary: "Previous session: X smells found, Y fixed. Trend: [improving/stable/declining]." Trend logic compares last two sessions: improving = smells_found decreased, stable = within ±20%, declining = smells_found increased.
+**Writing:** At end of Report, append session entry. Create file if it doesn't exist. Skip if `workflow.history_tracking` is `false` in config.
 **Append-only.** Never delete entries. Git-friendly (one entry per session).
 
 ## Context Optimization

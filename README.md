@@ -128,18 +128,80 @@ Execute a refactoring plan phase by phase, or review-then-apply without a plan.
 
 ## Configuration (optional)
 
-Create `.refactoring-config.json` in your project root to customize analysis:
+Create `.refactoring.yaml` in your project root to customize behavior. All fields are optional — missing fields use skill defaults. No config file = default behavior.
 
-```json
-{
-  "thresholds": { "max_method_lines": 30, "max_cyclomatic_complexity": 12 },
-  "custom_smells": [{ "name": "Raw SQL", "pattern": "query.*\\+", "severity": "critical" }],
-  "ignore_patterns": ["**/generated/**", "**/migrations/**", "**/vendor/**"],
-  "severity_overrides": { "Long Method": "minor" }
-}
+**Minimal example:**
+
+```yaml
+# .refactoring.yaml
+thresholds:
+  max_method_lines: 30
+  max_cyclomatic_complexity: 12
+ignore:
+  - "**/generated/**"
+  - "**/migrations/**"
 ```
 
-All fields are optional. Missing fields use defaults from `references/metrics.md`. No config file = default behavior.
+**Full schema** (all sections optional):
+
+```yaml
+# .refactoring.yaml — all fields optional
+
+thresholds:              # Override metrics.md defaults
+  max_method_lines: 20
+  max_class_lines: 250
+  max_file_lines: 500
+  max_parameters: 5
+  max_cyclomatic_complexity: 10
+  max_cognitive_complexity: 10
+
+custom_smells:           # Add project-specific smell detectors
+  - name: "Raw SQL"
+    pattern: "query.*\\+"
+    severity: critical
+
+ignore:                  # Glob patterns to exclude from analysis
+  - "**/generated/**"
+  - "**/vendor/**"
+
+severity_overrides:      # Override built-in smell severity
+  Long Method: minor
+
+workflow:                # Control skill behavior
+  skip_phases: []        # safeguard | verify | report
+  parallel: true         # parallel refactoring for directories
+  git_suggestions: true  # suggest stash/commit/branch
+  history_tracking: true # read/write .refactoring-history.json
+  report_format: markdown  # markdown | minimal
+  save_reports: false    # auto-save reports
+
+commands:                # Per-command defaults (CLI flags override)
+  fast:
+    default_flags: []    # e.g., ["--safe"]
+  review:
+    save_report: false
+  plan:
+    branch_prefix: "refactor/"
+  implement:
+    commit_per_step: true
+
+priority:                # Tune ROI scoring formula weights
+  severity_weight: 1
+  frequency_weight: 1
+  impact_weight: 1
+  effort_divisor: 1
+```
+
+See `SKILL.md` for detailed behavior of each section.
+
+### Migrating from v2 (.refactoring-config.json)
+
+1. Rename `.refactoring-config.json` to `.refactoring.yaml`
+2. Convert JSON syntax to YAML
+3. Rename `ignore_patterns` → `ignore`
+4. New sections available: `workflow`, `commands`, `priority`
+
+If both files exist, `.refactoring.yaml` takes precedence and the skill will warn about the legacy JSON file.
 
 ## History Tracking (optional)
 
@@ -149,7 +211,7 @@ The skill automatically appends session entries to `.refactoring-history.json` a
 Previous session: 15 smells found, 12 fixed. Trend: improving
 ```
 
-Consider adding `.refactoring-history.json` to `.gitignore` if you don't want to track it in version control.
+Disable with `workflow.history_tracking: false` in `.refactoring.yaml`. Consider adding `.refactoring-history.json` to `.gitignore` if you don't want to track it in version control.
 
 ## How it works
 
