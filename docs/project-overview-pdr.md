@@ -62,17 +62,32 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 - Enhanced smell detection: identify architectural issues before proposing transformations
 - Phased planning integration: `/refactor:plan` now loads both dependency & pattern references
 
-#### Phase 3: Collaborative Planning (Planned)
+#### Phase 3: Workflow Enhancement (v2.0.0 — COMPLETE)
 
-**FR3.1: Refactoring Planning**
-- `/refactor:plan [target]` — brainstorm with user, create phased plan
-- Break large refactorings into sequential phases with checkpoints
-- Estimate effort per phase
+**FR3.1: Migration Pattern Library**
+- Reference file `references/migration-patterns.md` with 5 common paradigm shifts: callback→async, class→functional, monolith→service, sync→async, ORM migration
+- Step-by-step migration sequences with verification and rollback guidance
+- Conditional loading in Transform phase for paradigm migration refactorings
 
-**FR3.2: Plan Execution**
-- `/refactor:implement [plan-path|target]` — execute plan phase by phase
-- Checkpoint validation between phases
-- User approval gates for risky transformations
+**FR3.2: Advanced Testing Strategies**
+- Property-based testing (Hypothesis, fast-check) for pure functions and data transformations
+- Snapshot/approval testing for complex outputs
+- Contract testing for API boundaries and service interfaces
+- Mutation testing awareness (mutmut, Stryker) for test quality validation
+- Characterization test best practices: public API testing, edge cases, state transitions
+
+**FR3.3: Git Strategy & Commit Discipline**
+- Suggest-only git practices: stash before refactoring, feature branch for planned work
+- Commit per refactoring: `git commit -m 'refactor: <what-changed>'` after each successful transformation
+- Conventional commits with `refactor:` prefix
+- Squash option for cleanup before merging
+
+**FR3.4: Parallel Refactoring Support**
+- Detect independent tasks via dependency analysis (for directory-level refactoring)
+- Group into batches based on file independence
+- Dispatch subagents for parallel execution
+- Merge results and full test suite verification to catch interaction issues
+- Applies to `/refactor:fast` when 3+ independent tasks identified
 
 ### Non-Functional Requirements
 
@@ -113,12 +128,11 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 - [x] README and CHANGELOG updated; version bumped to 2.0.0
 - [x] Breaking change documented: security vulnerabilities ranked #1 in priority order
 
-### v2.1.0+ (Future Phases)
+### v2.1.0+ (Subsequent Phases)
 
-- Test safeguarding (characterization tests)
-- Autonomous `/refactor:fast` with test verification
-- Collaborative planning `/refactor:plan`
-- Plan execution `/refactor:implement`
+- Advanced `/refactor:fast` with parallel execution for directory targets
+- Autonomous `/refactor:plan` with collaborative brainstorming
+- Plan execution `/refactor:implement` with phase-by-phase checkpoints
 
 ## Architecture & Dependencies
 
@@ -140,6 +154,7 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 | `prioritization.md` | 150+ | ROI scoring, Fix/Defer/Accept tree, hotspot identification |
 | `dependency-analysis.md` | 150+ | Circular deps, import graphs, module coupling, per-language tools |
 | `design-patterns.md` | 150+ | Smell-to-pattern mapping, YAGNI gate, modern alternatives, anti-patterns |
+| `migration-patterns.md` | 150+ | Paradigm migration sequences: callback→async, class→functional, monolith→service, sync→async, ORM |
 | `languages/python.md` | 200+ | Python-specific smells, convention discovery, framework patterns |
 | `languages/javascript-typescript.md` | 200+ | JS/TS-specific smells, convention discovery, React/Vue/Next.js patterns |
 | ... (14 more language files) | 200+ each | Per-language guidance for 16 total languages |
@@ -185,27 +200,30 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 - [x] Router enhancement with keyword detection
 - [x] All 16 languages with convention discovery
 
-### v2.1.0 (2026-02-15) — Structural Analysis
+### v2.1.0 (2026-02-08) — Workflow Enhancement
 
-- [x] Dependency analysis reference (circular deps, coupling, import graphs)
-- [x] Design patterns reference (smell-to-pattern mapping, YAGNI gate, modern alternatives)
-- [x] Conditional reference loading in Transform phase (design-patterns.md, dependency-analysis.md)
-- [x] `/refactor:plan` Scout loads dependency analysis; Brainstorm loads design patterns
-- [ ] Advanced: refactoring recipe library (common multi-phase patterns)
+- [x] Migration patterns reference (callback→async, class→functional, monolith→service, sync→async, ORM)
+- [x] Advanced testing strategies (property-based, snapshot, contract, mutation testing)
+- [x] Git strategy section with suggest-only practices (stash, commit-per-refactoring, conventional commits)
+- [x] Parallel refactoring support for directory targets with 3+ independent tasks
+- [x] Conditional loading of migration-patterns.md in Transform phase
+- [x] `/refactor:fast` with git stash/commit suggestions and parallel check
+- [x] `/refactor:plan` and `/refactor:implement` with migration-patterns.md reference and conventional commits
+- [x] SKILL.md Parallel Refactoring section with batch execution strategy
 
-### v2.2.0 (2026-03-01) — Autonomous Refactoring
+### v2.2.0 (2026-03-01) — Advanced Planning
 
-- [ ] `/refactor:fast` command implementation
-- [ ] Single-transformation validation loop
-- [ ] Test-driven revert on failure
-- [ ] Transformation rollback points
-
-### v2.3.0 (2026-03-15) — Collaborative Planning
-
-- [ ] `/refactor:plan` command
+- [ ] `/refactor:plan` command with brainstorming and phased planning
+- [ ] `/refactor:implement` with plan execution and phase checkpoints
 - [ ] Multi-phase plan generation and storage
-- [ ] Phase-by-phase execution with checkpoints
-- [ ] User approval gates
+- [ ] User approval gates for risky transformations
+
+### v2.3.0 (2026-03-15) — Autonomous Execution
+
+- [ ] Full `/refactor:fast` autonomy with parallel batch execution
+- [ ] Stash/restore workflow automation (optional user opt-in)
+- [ ] Advanced parallel batching for 10+ file projects
+- [ ] Integration with external test frameworks (pytest, jest, go test, etc.)
 
 ### v2.4.0+ (Q2 2026) — Advanced
 

@@ -27,6 +27,7 @@ claude-skill-refactoring/
 │   ├── prioritization.md              # ROI scoring & Fix/Defer/Accept tree
 │   ├── dependency-analysis.md         # Circular deps, coupling, import graphs
 │   ├── design-patterns.md             # Smell-to-pattern mapping, YAGNI gate
+│   ├── migration-patterns.md          # Paradigm migration sequences (5 types)
 │   └── languages/
 │       ├── _index.md                  # Language routing table
 │       ├── python.md                  # Python-specific patterns

@@ -10,12 +10,19 @@
 - Router now detects review/analyze/audit/scan keywords and routes to `/refactor:review`
 - **`references/dependency-analysis.md`** — Circular dependency detection strategies, import graph analysis guidance, module coupling checklist (>5 imports = split candidate), package boundary rules, pre/post refactoring verification, per-language tool recommendations (madge, deptry, jdeps, cargo-udeps, etc.).
 - **`references/design-patterns.md`** — Smell-to-pattern mapping table (11 smells → pattern options with context), YAGNI gate criteria (rule of three), modern alternatives to GoF patterns (Strategy → higher-order functions, Singleton → DI, etc.), 4 anti-patterns (premature abstraction, God Strategy, pattern for pattern's sake, inheritance addiction).
+- **`references/migration-patterns.md`** — Step-by-step migration sequences for 5 common paradigm shifts: callback→Promise→async/await, class→functional components (React lifecycle mapping), monolith→service extraction (Strangler Fig, Branch by Abstraction), sync→async processing (message queue, event sourcing), ORM migration (repository abstraction).
+- **Git Strategy** section in SKILL.md — suggest-only git practices: stash before start, commit-per-refactoring, conventional commits (`refactor:` prefix), feature branch for plans, squash option
+- **Advanced testing strategies** in Safeguard phase — property-based testing (Hypothesis, fast-check), snapshot/approval testing, contract testing, mutation testing awareness (mutmut, Stryker)
+- **Parallel refactoring** support in SKILL.md and `/refactor:fast` — detect independent tasks via dependency graph, batch execution, merge + full test verification
 
 ### Changed
 - SKILL.md Analyze phase now loads metrics.md, security-smells.md, and prioritization.md alongside code-smells.md
 - **Breaking:** Priority order updated — security vulnerabilities now ranked #1 above correctness risks. Refactoring output may differ from v1.x for codebases with security smells.
 - SKILL.md Transform phase conditionally loads design-patterns.md (architectural smells) and dependency-analysis.md (multi-file refactoring)
-- `/refactor:plan` Scout step now maps import graph; Brainstorm step consults design-patterns.md
+- `/refactor:plan` Scout step now maps import graph and suggests feature branch; Brainstorm step consults design-patterns.md and migration-patterns.md
+- `/refactor:fast` now suggests git stash/commit, includes parallel refactoring check for directory targets
+- `/refactor:implement` now suggests conventional commit after each successful transformation
+- SKILL.md Transform phase conditionally loads migration-patterns.md for paradigm migrations
 - Version bump: 1.2.0 → 2.0.0
 
 ## [1.2.0] - 2026-02-06

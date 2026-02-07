@@ -65,6 +65,12 @@ def test_existing_behavior_description():
 - If refactoring changes internal interfaces, test the contracts between components
 - If refactoring modifies data flow, test end-to-end data transformations
 
+**Advanced testing strategies (suggest when appropriate):**
+- **Property-based testing:** For pure functions and data transformations — generates random inputs to find edge cases (Hypothesis for Python, fast-check for JS/TS, QuickCheck for Haskell/Erlang)
+- **Snapshot/approval testing:** For complex outputs (serialization, template rendering, CLI output) — captures output and flags changes for review
+- **Contract testing:** For API boundaries and service interfaces — verifies request/response schemas remain compatible after refactoring
+- **Mutation testing awareness:** After refactoring completes, suggest running mutation tests (mutmut for Python, Stryker for JS/TS) to validate test quality. If tests pass after code mutations, the tests are too weak.
+
 ### 3. Transform — Apply Refactoring Methods
 
 Apply refactoring techniques from `references/refactoring-methods.md`.
@@ -72,6 +78,7 @@ Apply refactoring techniques from `references/refactoring-methods.md`.
 **Conditional references (load only when relevant — skip for single-file mechanical refactorings like rename, extract method, remove dead code):**
 - For architectural smells (God Class, Feature Envy, tight coupling, circular deps): also load `references/design-patterns.md` for smell-to-pattern mapping and YAGNI gate
 - For multi-file/module refactoring: load `references/dependency-analysis.md` to understand import graph and verify boundaries before and after changes
+- For migration refactorings (callback→async, class→functional, monolith→service, sync→async, ORM switch): load `references/migration-patterns.md` for step-by-step migration sequences
 
 Key principles:
 
@@ -129,6 +136,31 @@ Before analyzing code, detect language conventions:
 6. Output two sections: **Aligned Refactorings** (respect conventions) + **Convention Improvements** (suggest better practices with reasoning)
 
 Read the appropriate language file(s) from `references/languages/` for language-specific refactoring patterns covering Python, JavaScript/TypeScript, Java, Go, Rust, PHP, Ruby, C#, Swift, and Kotlin.
+
+## Git Strategy
+
+Suggest (never force) these git practices to the user:
+
+- **Before starting:** If uncommitted changes exist, suggest `git stash --include-untracked` to save work-in-progress
+- **For planned refactorings:** Suggest creating a feature branch: `git checkout -b refactor/<target-name>`
+- **Commit per refactoring:** After each successful transformation + test pass, suggest committing: `git commit -m 'refactor: <what-changed>'`
+- **Conventional commits:** Use `refactor:` prefix for all refactoring commits
+- **After completion:** If work was stashed, remind user to `git stash pop`
+- **Squash option:** For many small commits, mention `git rebase -i` to squash before merging
+
+**Important:** These are suggestions only. Follow the user's existing git workflow. Never auto-stash, auto-commit, or auto-branch without user confirmation.
+
+## Parallel Refactoring
+
+For directory-level refactoring with many independent tasks:
+
+1. **Detect independence:** After Analyze, check dependency graph (via `references/dependency-analysis.md`) for tasks with no shared file dependencies
+2. **Group into batches:** Tasks that touch different files can run in parallel batches
+3. **Execute:** Dispatch one subagent per batch for parallel execution
+4. **Merge and verify:** Collect results, run full test suite to catch interaction issues
+5. **Fallback:** If dependency analysis is unavailable or unclear, default to sequential execution
+
+Only parallelize when: target is a directory/module (not single file), 3+ independent tasks identified, and no shared file dependencies within batches.
 
 ## Decision Rules
 

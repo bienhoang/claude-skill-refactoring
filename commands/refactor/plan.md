@@ -17,6 +17,8 @@ Use `scout` subagent to read target files/directories and map code structure, de
 
 Load `references/dependency-analysis.md`. Map import graph for target modules and identify circular dependencies before planning phases.
 
+Suggest creating a feature branch: "Consider creating a branch: `git checkout -b refactor/<target-name>` for this planned refactoring."
+
 ### 2. Analyze
 Load `references/code-smells.md`. Perform thorough analysis:
 - Scan all target files for code smells
@@ -31,7 +33,7 @@ Report smell analysis to user with severity table. Then use `AskUserQuestion` to
 - Clarify scope boundaries
 
 ### 4. Brainstorm Strategy
-Load `references/refactoring-methods.md`. Consult `references/design-patterns.md` for smell-to-pattern mapping when architectural smells are present. Load `references/languages/_index.md`, identify relevant language file(s), load them, execute Discovery section to detect project conventions.
+Load `references/refactoring-methods.md`. Consult `references/design-patterns.md` for smell-to-pattern mapping when architectural smells are present. For migration-type refactorings (callback→async, class→functional, etc.), load `references/migration-patterns.md` to identify correct migration sequence. Load `references/languages/_index.md`, identify relevant language file(s), load them, execute Discovery section to detect project conventions.
 Discuss with user:
 - Which refactoring techniques to apply and in what order
 - Risk assessment for each transformation

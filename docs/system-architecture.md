@@ -124,13 +124,14 @@ else:
 1. **Scout:** Load dependency-analysis.md; map import graph and identify circular dependencies
 2. **Analyze:** Scan code for smells; load language reference(s); execute convention discovery
 3. **Present Findings:** Report smell analysis with severity; ask user about constraints and priorities
-4. **Brainstorm Strategy:** Load refactoring-methods.md and design-patterns.md (if architectural smells detected); consult language reference for conventions
+4. **Brainstorm Strategy:** Load refactoring-methods.md, design-patterns.md (if architectural smells), migration-patterns.md (if paradigm shifts detected); consult language reference for conventions
 5. **Create Plan:** Generate multi-phase plan with smell-targeting, transformation sequences, behavior preservation notes
 6. **Save Plan:** Store to `plans/refactor-{target}/plan.md` with YAML frontmatter
 
 **Conditional References:**
 - Load dependency-analysis.md during Scout phase
 - Load design-patterns.md during Brainstorm Strategy if architectural smells identified
+- Load migration-patterns.md during Brainstorm Strategy if callback→async, class→functional, monolith→service, sync→async, or ORM migration patterns detected
 
 **Implicit Behavior:**
 - User approves/modifies plan before execution
@@ -206,6 +207,13 @@ else:
 - Anti-patterns: premature abstraction, God Strategy, inheritance addiction
 - Used in: Transform phase (conditional load for architectural smells)
 
+**`migration-patterns.md`** (150+ LOC)
+- Step-by-step paradigm migration sequences for 5 common conversions
+- Migrations: callback→Promise→async/await, class→functional components, monolith→service extraction, sync→async processing, ORM migration
+- For each: context, steps with verification, rollback guidance, hybrid state acceptability
+- Risk profiles and reversibility notes (medium/high risk, partial reversibility)
+- Used in: Transform phase (conditional load for paradigm migrations); Brainstorm phase (identify correct migration sequence)
+
 #### Language-Specific References (`references/languages/`)
 
 **Routing** (`_index.md`):
@@ -274,7 +282,8 @@ Each file includes:
    ├─ Load language-specific file
    └─ Conditional (Transform phase):
       ├─ Load design-patterns.md (if architectural smells detected)
-      └─ Load dependency-analysis.md (if multi-file refactoring planned)
+      ├─ Load dependency-analysis.md (if multi-file refactoring planned)
+      └─ Load migration-patterns.md (if paradigm migrations detected)
 
 6. Analysis
    ├─ Scan code for smells (25+ patterns)
@@ -317,6 +326,39 @@ Each file includes:
    ├─ Test results summary
    └─ Recommended next refactorings
 ```
+
+## Advanced Features (Phase 3)
+
+### Git Strategy
+
+Suggest-only practices (never auto-execute without explicit user approval):
+
+1. **Before Starting:** If uncommitted changes detected → suggest `git stash --include-untracked`
+2. **For Planned Refactorings:** Suggest feature branch: `git checkout -b refactor/<target-name>`
+3. **Commit Per Refactoring:** After each successful transformation + test pass → suggest `git commit -m 'refactor: <what-changed>'`
+4. **Conventional Commits:** Use `refactor:` prefix for all refactoring commits
+5. **Cleanup:** For many small commits, mention `git rebase -i` to squash before merging
+6. **Restore on Failure:** If tests fail, revert via `git restore <changed-files>`
+
+**Philosophy:** These are suggestions only. Respect existing git workflows; never auto-stash, auto-commit, or auto-branch without confirmation.
+
+### Parallel Refactoring
+
+For directory-level refactoring with 3+ independent tasks:
+
+1. **Detect Independence:** After Analyze phase, check dependency graph for non-shared file dependencies
+2. **Group into Batches:** Tasks touching different files grouped into parallel execution batches
+3. **Execute:** Dispatch one subagent per batch for parallel execution
+4. **Merge & Verify:** Collect results, run full test suite to catch interaction issues
+5. **Fallback:** If dependency analysis unavailable, default to sequential execution
+
+**Conditions to trigger parallel execution:**
+- Target is directory/module (not single file)
+- 3+ independent tasks identified in Analyze phase
+- No shared file dependencies within batches
+- Applied in `/refactor:fast` for directory targets with explicit parallel check
+
+**Output:** Parallel execution progress tracked per batch; final report shows all transformations applied across batches.
 
 ## Installation & Distribution
 
@@ -481,13 +523,14 @@ SKILL.md (core workflow)
 ├─ references/prioritization.md
 ├─ references/design-patterns.md (conditional: Transform phase, architectural smells)
 ├─ references/dependency-analysis.md (conditional: Transform phase, multi-file refactoring)
+├─ references/migration-patterns.md (conditional: Transform phase, paradigm migrations)
 └─ references/languages/{language}.md
    └─ references/languages/_index.md
 
 commands/refactor.md (router)
 ├─ commands/refactor/review.md
 ├─ commands/refactor/fast.md
-├─ commands/refactor/plan.md (loads dependency-analysis.md in Scout; design-patterns.md in Brainstorm)
+├─ commands/refactor/plan.md (loads dependency-analysis.md in Scout; design-patterns.md & migration-patterns.md in Brainstorm)
 └─ commands/refactor/implement.md
 
 install-skill.js / uninstall-skill.js

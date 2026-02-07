@@ -23,6 +23,7 @@ When you ask Claude Code to refactor your code, this skill guides it through a s
 | `references/prioritization.md` | ROI scoring formula, Fix/Defer/Accept decision tree, quick-win identification |
 | `references/dependency-analysis.md` | Circular dependency detection, import graph analysis, module coupling checklist, per-language tools |
 | `references/design-patterns.md` | Smell-to-pattern mapping, YAGNI gate, modern alternatives, anti-patterns to avoid |
+| `references/migration-patterns.md` | Step-by-step migration sequences: callback→async, class→functional, monolith→service, sync→async, ORM |
 | `references/languages/` | Per-language refactoring patterns with convention discovery (Python, JS/TS, Java, Go, Rust, PHP, Ruby, C#, Swift, Kotlin, C/C++, Dart, Scala, Elixir, Shell/Bash, Lua) |
 
 ## Installation
@@ -139,6 +140,7 @@ Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` 
     ├── prioritization.md             # ROI-based fix ordering
     ├── dependency-analysis.md        # Import graph and coupling analysis
     ├── design-patterns.md            # Smell-to-pattern mapping
+    ├── migration-patterns.md         # Paradigm migration sequences
     └── languages/                    # Per-language patterns with convention discovery
         ├── _index.md                 # Language routing (extensions → file mapping)
         ├── python.md

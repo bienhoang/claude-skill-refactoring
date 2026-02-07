@@ -22,8 +22,8 @@ If `$ARGUMENTS` is a path to a plan `.md` file, or if an active refactoring plan
 5. **For each transformation:**
    a. Apply single refactoring technique (from phase's Transformation Sequence)
    b. Run tests (auto-detect: pytest, jest/vitest, go test, cargo test, etc.)
-   c. If fail → **revert using `git checkout -- <changed-files>`**, report to user, ask whether to continue or stop
-   d. If pass → mark task complete, proceed to next
+   c. If fail → **revert using `git restore <changed-files>`**, report to user, ask whether to continue or stop
+   d. If pass → suggest committing: `git commit -m 'refactor: <technique-applied> in <file>'`, then proceed to next
 5. After all transformations in phase complete:
    - Use `code-reviewer` subagent to review changes
    - Present review results to user
@@ -42,8 +42,8 @@ If `$ARGUMENTS` is a file/directory path (not a plan) or no plan detected:
 5. On confirmation → apply transformations one at a time:
    a. Apply single refactoring
    b. Run tests (auto-detect: pytest, jest/vitest, go test, cargo test, etc.)
-   c. If fail → **revert using `git checkout -- <changed-files>`**, report, continue to next
-   d. If pass → proceed
+   c. If fail → **revert using `git restore <changed-files>`**, report, continue to next
+   d. If pass → suggest committing: `git commit -m 'refactor: <technique-applied> in <file>'`, then proceed
 6. After all transformations:
    - Use `code-reviewer` subagent to review changes
    - Present review results to user
@@ -52,7 +52,7 @@ If `$ARGUMENTS` is a file/directory path (not a plan) or no plan detected:
 ## Transformation Rules
 - **One refactoring at a time** — never batch without intermediate verification
 - **Preserve behavior** — external observable behavior must not change
-- **Revert on failure** — use `git checkout -- <changed-files>` to restore previous state
+- **Revert on failure** — use `git restore <changed-files>` to restore previous state
 - **Small steps** — break large refactorings into sequence of safe transformations
 - **Discovery:** Load `references/languages/_index.md`, identify language file(s), load them, execute Discovery section to detect project conventions
 - Apply language-specific patterns from loaded language file(s)
