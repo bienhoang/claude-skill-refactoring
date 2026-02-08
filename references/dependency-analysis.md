@@ -148,3 +148,7 @@ After completing multi-file refactoring:
 3. **Coupling reduced:** Ce for refactored modules should decrease or stay same
 4. **Tests pass:** All existing tests pass, no broken imports
 5. **No orphans:** No modules left disconnected unintentionally
+
+## Architectural-Scale Analysis
+
+For module-level coupling issues at architectural scale (God Module, Layer Violations, Distributed Monolith, etc.), see `references/architecture/architectural-smells.md`. This file focuses on import graph mechanics; architectural smells operate at a higher abstraction level.

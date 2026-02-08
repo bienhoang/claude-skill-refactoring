@@ -143,3 +143,53 @@ Strategies for efficient analysis of large codebases:
 - **Chunking:** Prefer splitting at logical boundaries (class, module, function). Avoid splitting mid-function when possible.
 - **Reference loading:** Load `code-smells.md` for all analyses. Load other references only when their domain is relevant. Prefer loading 1 reference thoroughly over 3 partially.
 - **Multi-file targets:** Build file list first, then analyze in priority order (largest/most-imported files first). Focus on key findings rather than exhaustively scanning every file.
+
+## Architectural Analysis Strategy
+
+Architectural analysis runs when the target is a directory or module (not single file). It adds style detection and arch-level smell scanning on top of the standard code-level analysis.
+
+### Style Detection Algorithm
+
+1. **Directory structure scan:** Match target directory layout against canonical patterns
+   from `references/architecture/architectural-styles.md` style detection table.
+   Score: 0-100 per style based on pattern matches.
+
+2. **Import flow analysis:** Trace import directions between top-level modules.
+   Validate against dependency flow rules for each candidate style.
+   Score: 0-100 based on rule conformance.
+
+3. **Infra file scanning (optional):** If Docker Compose, K8s manifests, or Terraform
+   files exist, scan for deployment pattern hints (e.g., multiple service containers
+   → microservices, single container → monolith). Read-only, never modify.
+   Score: 0-100 based on signal presence.
+
+4. **Weighted confidence:**
+   - With infra files: `(dir_score*0.3 + import_score*0.4 + infra_score*0.3) / 100`
+   - Without infra files: `(dir_score*0.4 + import_score*0.6) / 100` (dynamic re-weighting)
+   - High: >= 0.7
+   - Medium: 0.4 - 0.69
+   - Low: < 0.4
+
+If `.refactoring.yaml` has `architecture.style` set, skip auto-detection and use
+the configured style with confidence "configured".
+
+### When to Recommend What
+
+| Finding | Recommendation |
+|---------|---------------|
+| Boundary violations only (no structural issues) | Fix boundaries directly — suggest specific import changes |
+| Structural smells (God Module, Feature Scattering) | `/refactor:plan` for phased restructuring |
+| Style mismatch (project diverges from detected style) | Document tensions; recommend gradual alignment |
+| Distribution smells (Distributed Monolith, Chatty Services) | `/refactor:plan` — these are high-risk, multi-step changes |
+| Architecture.style override + smells detected | Validate config matches reality; warn if override conflicts with detected signals |
+
+### Architectural Report Additions
+
+When architectural analysis runs during `/refactor:review` or `/refactor:fast` on
+directory targets, include a condensed arch section in the report:
+
+- **Detected Style:** {name} (confidence: {level})
+- **Arch Smells:** {count} ({critical}/{major}/{minor})
+- **Recommendation:** {brief — link to `/refactor:architecture` for full analysis}
+
+For the full Architectural Health Report template, see the `/refactor:architecture` command.

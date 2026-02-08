@@ -10,7 +10,7 @@ Step-by-step patterns for migrating between code paradigms. Load this reference 
 migrations:
   callback_to_async: { risk: medium, steps: 4, reversible: true }
   class_to_functional: { risk: medium, steps: 5, reversible: true }
-  monolith_to_service: { risk: high, steps: 3_patterns, reversible: partial }
+  monolith_to_service: "→ see references/architecture/architectural-patterns.md"
   sync_to_async: { risk: high, steps: 4, reversible: false }
   orm_migration: { risk: high, steps: 3_strategies, reversible: true }
 general_rule: "Migrate incrementally — hybrid state is acceptable and expected"
@@ -62,26 +62,9 @@ general_rule: "Migrate incrementally — hybrid state is acceptable and expected
 
 ## Monolith → Service Extraction
 
-**When:** Monolithic application needs to extract functionality into separate services. High-risk migration requiring careful planning.
+For monolith-to-service migration patterns (Strangler Fig, Branch by Abstraction), see `references/architecture/architectural-patterns.md`. These patterns are architectural-level and are now maintained alongside other architectural patterns.
 
-### Strangler Fig Pattern
-Best for: edge/API layer services with clear request routing.
-
-1. **Transform:** Identify target functionality. Build new service implementing same interface.
-2. **Coexist:** Add proxy/router that intercepts requests. Route matching requests to new service, everything else to monolith.
-3. **Eliminate:** Once traffic fully migrated and stable, remove old code from monolith.
-
-### Branch by Abstraction
-Best for: deep stack components with many upstream dependents.
-
-1. **Create abstraction:** Insert interface between target component and its clients.
-2. **Migrate clients:** Update all clients to use the abstraction (not the concrete implementation).
-3. **Swap implementation:** Build new service behind the abstraction. Switch to new implementation.
-4. **Remove old:** Delete old implementation once new is validated.
-
-**Verification:** Run integration tests at each step. Monitor error rates during coexistence. Use feature flags to control rollout percentage.
-
-**Rollback:** Strangler Fig — route traffic back to monolith. Branch by Abstraction — swap back to old implementation.
+The remaining migrations below are code-level paradigm shifts.
 
 ## Sync → Async Processing
 

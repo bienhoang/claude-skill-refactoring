@@ -35,6 +35,11 @@ These are suggestion-only triggers — never auto-execute refactoring without ex
 
 Score findings using metrics.md thresholds, rank with prioritization.md. Report severity (critical/major/minor) before proceeding.
 
+**Architectural analysis (directory/module targets only):**
+- Load `references/architecture/architectural-styles.md` → detect style + confidence
+- Load `references/architecture/architectural-smells.md` → scan for arch-level smells
+- For detailed detection algorithm, see `REFERENCE.md > Architectural Analysis Strategy`
+
 ### 2. Safeguard — Ensure Tests Exist
 
 **Never refactor without a safety net.**
@@ -51,6 +56,7 @@ Load `references/refactoring-methods.md`. Conditional references (skip for simpl
 - Architectural smells → load `references/design-patterns.md`
 - Multi-file refactoring → load `references/dependency-analysis.md`
 - Migration refactorings → load `references/migration-patterns.md`
+- Architectural smells (directory targets) → load `references/architecture/architectural-patterns.md`
 
 **Principles:** One refactoring at a time. Small steps. Preserve behavior. Note commit points after each successful transformation + test pass.
 
@@ -89,6 +95,7 @@ For detailed guidance on these topics, see `REFERENCE.md`:
 - **Parallel Refactoring** — batch execution for directory targets with 3+ independent tasks
 - **Project Configuration** — `.refactoring.yaml` schema, workflow overrides, command defaults, priority weights
 - **Context Optimization** — strategies for efficient analysis of large codebases
+- **Architectural Analysis** — style detection, arch-level smells and patterns (conditional on directory/module targets)
 
 ## Decision Rules
 

@@ -54,3 +54,10 @@ priority:
   frequency_weight: 1         # multiplier for Frequency in formula
   impact_weight: 1            # multiplier for Impact in formula
   effort_divisor: 1           # multiplier for Effort divisor in formula
+
+# Architecture analysis settings (optional)
+architecture:
+  style: ""                  # Override auto-detection (e.g., "hexagonal", "layered", "microservices")
+  strict_boundaries: false   # Treat all boundary violations as critical severity
+  infra_scan: true           # Scan Docker/K8s/Terraform for deployment style hints (read-only)
+  ignore_patterns: []        # Glob patterns to skip during arch analysis (e.g., ["**/scripts/**"])
