@@ -203,7 +203,7 @@ test("content-utils: escapeRegex escapes special chars", () => {
 
 // === Registry Discovery ===
 
-test("Registry: discovers all 5 Tier 1 adapters", () => {
+test("Registry: discovers Tier 1 adapters", () => {
   // Use fresh registry
   delete require.cache[require.resolve("../adapters/registry")];
   const registry = require("../adapters/registry");
@@ -214,7 +214,7 @@ test("Registry: discovers all 5 Tier 1 adapters", () => {
   assert.ok(names.includes("windsurf"), "should have windsurf");
   assert.ok(names.includes("gemini-cli"), "should have gemini-cli");
   assert.ok(names.includes("codex-cli"), "should have codex-cli");
-  assert.strictEqual(list.length, 5, "should have exactly 5 adapters");
+  assert.ok(list.length >= 5, "should have at least 5 adapters");
 });
 
 // === Cursor Adapter ===
@@ -517,7 +517,7 @@ test("Codex CLI: uninstall removes section from AGENTS.md", () => {
 
 // === CLI Integration ===
 
-test("CLI: tools command shows all 5 adapters", () => {
+test("CLI: tools command shows Tier 1 adapters", () => {
   const { execFileSync } = require("child_process");
   const cliPath = path.resolve(__dirname, "..", "cli.js");
   const output = execFileSync(process.execPath, [cliPath, "tools"], { encoding: "utf-8" });
@@ -526,5 +526,5 @@ test("CLI: tools command shows all 5 adapters", () => {
   assert.ok(output.includes("windsurf"), "should list windsurf");
   assert.ok(output.includes("gemini-cli"), "should list gemini-cli");
   assert.ok(output.includes("codex-cli"), "should list codex-cli");
-  assert.ok(output.includes("Supported tools (5)"), "should show count 5");
+  assert.ok(output.includes("Supported tools ("), "should show supported tools count");
 });

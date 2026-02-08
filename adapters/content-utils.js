@@ -94,20 +94,17 @@ function appendToExistingFile(filePath, content, dryRun = false) {
   }
 
   const existing = fs.readFileSync(filePath, "utf-8");
-  const hasStart = existing.includes(MARKER_START);
-  const hasEnd = existing.includes(MARKER_END);
+  const markerState = validateMarkers(existing, MARKER_START, MARKER_END);
 
   // Markers damaged — one exists but not the other
-  if (hasStart !== hasEnd) {
-    const found = hasStart ? "start" : "end";
-    const missing = hasStart ? "end" : "start";
+  if (!markerState.valid) {
     return {
       action: "skipped",
-      message: `Section markers damaged in ${path.basename(filePath)} (found ${found}, missing ${missing}). Manual fix needed — remove partial markers and re-run install.`,
+      message: `Section markers damaged in ${path.basename(filePath)} (found ${markerState.found}, missing ${markerState.missing}). Manual fix needed — remove partial markers and re-run install.`,
     };
   }
 
-  if (hasStart && hasEnd) {
+  if (markerState.hasMarkers) {
     // Replace existing section
     const regex = new RegExp(
       `${escapeRegex(MARKER_START)}[\\s\\S]*?${escapeRegex(MARKER_END)}`
@@ -133,6 +130,27 @@ function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+/**
+ * Validate that both start and end markers are present or both absent.
+ * @param {string} content - file content to check
+ * @param {string} startMarker - start marker string
+ * @param {string} endMarker - end marker string
+ * @returns {{ valid: boolean, hasMarkers: boolean, found?: string, missing?: string }}
+ */
+function validateMarkers(content, startMarker, endMarker) {
+  const hasStart = content.includes(startMarker);
+  const hasEnd = content.includes(endMarker);
+  if (hasStart !== hasEnd) {
+    return {
+      valid: false,
+      hasMarkers: false,
+      found: hasStart ? "start" : "end",
+      missing: hasStart ? "end" : "start",
+    };
+  }
+  return { valid: true, hasMarkers: hasStart && hasEnd };
+}
+
 module.exports = {
   stripClaudeFrontmatter,
   stripClaudeDirectives,
@@ -140,6 +158,7 @@ module.exports = {
   wrapWithMarkers,
   appendToExistingFile,
   escapeRegex,
+  validateMarkers,
   MARKER_START,
   MARKER_END,
 };
