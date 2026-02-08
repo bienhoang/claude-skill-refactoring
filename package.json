@@ -1,6 +1,6 @@
 {
   "name": "claude-skill-refactoring",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Claude Code skill for systematic code refactoring with code smell detection, safe transformation, and test verification",
   "keywords": [
     "claude-code",
@@ -29,8 +29,11 @@
   },
   "files": [
     "SKILL.md",
+    "REFERENCE.md",
     "references/",
+    "resources/",
     "commands/",
+    "scripts/",
     ".claude-skill.json",
     "install-skill.js",
     "uninstall-skill.js",

@@ -124,7 +124,9 @@ function install() {
 
   const filesToCopy = [
     { src: "SKILL.md", dest: "SKILL.md" },
+    { src: "REFERENCE.md", dest: "REFERENCE.md" },
     { src: "references", dest: "references" },
+    { src: "resources", dest: "resources" },
   ];
 
   for (const target of targets) {

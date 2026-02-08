@@ -203,6 +203,15 @@ See `SKILL.md` for detailed behavior of each section.
 
 If both files exist, `.refactoring.yaml` takes precedence and the skill will warn about the legacy JSON file.
 
+### Migrating from v3
+
+v4.0.0 restructures the skill architecture for token optimization:
+- SKILL.md is now a concise workflow (<5k tokens) — detailed instructions moved to REFERENCE.md
+- Templates extracted to `resources/templates/`
+- New validation script: `python3 scripts/validate-skill.py .`
+
+No changes to `.refactoring.yaml` config, slash commands, or behavior.
+
 ## History Tracking (optional)
 
 The skill automatically appends session entries to `.refactoring-history.json` after each refactoring run (not after review-only). This enables trend tracking across sessions:
@@ -219,7 +228,13 @@ Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` 
 
 ```
 ~/.claude/skills/refactoring/
-├── SKILL.md                          # Core workflow (what Claude follows)
+├── SKILL.md                          # Core workflow (<5k tokens)
+├── REFERENCE.md                      # Detailed phase instructions (on-demand)
+├── resources/
+│   └── templates/
+│       ├── report-template.md        # Refactoring report template
+│       ├── session-history-schema.json # Session history JSON schema
+│       └── config-schema.yaml        # Full .refactoring.yaml example
 └── references/
     ├── code-smells.md                # Smell catalog (loaded when analyzing)
     ├── refactoring-methods.md        # Method catalog (loaded when transforming)
@@ -258,7 +273,7 @@ Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` 
     └── implement.md                  # /refactor:implement
 ```
 
-References are loaded on-demand using Claude's progressive disclosure pattern — they only consume context when Claude actually needs them.
+SKILL.md is a concise workflow (<5k tokens). Detailed strategies, configuration schema, and templates are in REFERENCE.md and resources/templates/, loaded on-demand using Claude's progressive disclosure pattern.
 
 ## Uninstall
 

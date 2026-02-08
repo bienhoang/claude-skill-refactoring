@@ -4,12 +4,22 @@
 
 ```
 claude-skill-refactoring/
-├── SKILL.md                           # Core skill definition & workflow
+├── SKILL.md                           # Core workflow (<5k tokens)
+├── REFERENCE.md                       # Detailed phase instructions (on-demand)
 ├── README.md                          # User-facing documentation
 ├── CHANGELOG.md                       # Version history
-├── package.json                       # npm metadata (v2.0.0)
+├── package.json                       # npm metadata (v4.0.0)
 ├── .claude-skill.json                 # Skill registration
 ├── LICENSE                            # MIT license
+│
+├── resources/
+│   └── templates/
+│       ├── report-template.md         # Refactoring report template
+│       ├── session-history-schema.json # Session history JSON schema
+│       └── config-schema.yaml         # Full .refactoring.yaml example
+│
+├── scripts/
+│   └── validate-skill.py             # 29-point skill validation script
 │
 ├── commands/                          # CLI slash commands
 │   ├── refactor.md                    # /refactor — intelligent router
@@ -278,7 +288,7 @@ Maps code smells to design pattern solutions for structural refactoring:
 - **Clarity:** Each entry should be actionable and reference relevant files
 - **Breaking changes:** Clearly marked and explained with migration guidance
 
-**Current version:** 2.0.0 (2026-02-08)
+**Current version:** 4.0.0 (2026-02-08)
 
 ## Maintenance & Deprecation
 

@@ -378,7 +378,7 @@ For directory-level refactoring with 3+ independent tasks:
 
 **npm postinstall Hook** (`install-skill.js`):
 1. Read `.claude-skill.json` configuration
-2. Copy skill files to `~/.claude/skills/refactoring/` (global) or `.claude/skills/refactoring/` (project)
+2. Copy skill files (SKILL.md, REFERENCE.md, references/, resources/) to `~/.claude/skills/refactoring/` (global) or `.claude/skills/refactoring/` (project)
 3. Copy command files to `~/.claude/commands/` (global) or `.claude/commands/` (project)
 4. Make commands available as slash commands in Claude Code
 

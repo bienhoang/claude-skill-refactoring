@@ -12,7 +12,9 @@
   },
   "files": {
     "SKILL.md": "SKILL.md",
+    "REFERENCE.md": "REFERENCE.md",
     "references": "references/",
+    "resources": "resources/",
     "commands": "commands/"
   }
 }

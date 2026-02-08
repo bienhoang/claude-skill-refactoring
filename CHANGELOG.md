@@ -1,5 +1,32 @@
 # Changelog
 
+## [4.0.0] - 2026-02-08
+
+### Added
+- **REFERENCE.md** — detailed phase instructions, configuration schema, session history format, moved from SKILL.md for token optimization
+- **resources/templates/** — extracted templates directory:
+  - `report-template.md` — refactoring report template
+  - `session-history-schema.json` — JSON schema for .refactoring-history.json
+  - `config-schema.yaml` — full .refactoring.yaml example with all fields
+- **scripts/validate-skill.py** — 29-point skill validation with scoring (PASS >= 24/29)
+- Auto-invocation triggers section in SKILL.md
+- Dual-keyword description in SKILL.md frontmatter (natural + technical language)
+
+### Changed
+- **Breaking:** SKILL.md restructured from 345 lines (~19KB) to ~98 lines (<5k tokens)
+- **Breaking:** Detailed instructions moved from SKILL.md to REFERENCE.md
+- **Breaking:** Report template, session history schema, and config example moved to resources/templates/
+- install-skill.js now copies REFERENCE.md and resources/ to skill target directory
+- .claude-skill.json files map updated with new entries
+- package.json version bumped 3.0.0 → 4.0.0, files array updated
+
+### Migration from v3
+- No changes to `.refactoring.yaml` configuration
+- No changes to slash commands (`/refactor`, `/refactor:review`, etc.)
+- No changes to `references/` directory
+- SKILL.md is now a concise workflow — detailed content in REFERENCE.md
+- If you manually installed (git clone), pull latest and the new files will be included
+
 ## [3.0.0] - 2026-02-08
 
 ### Added

@@ -128,17 +128,20 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 - [x] README and CHANGELOG updated; version bumped to 2.0.0
 - [x] Breaking change documented: security vulnerabilities ranked #1 in priority order
 
-### v2.1.0+ (Subsequent Phases)
+### v4.0.0 (Architecture Improvements)
 
-- Advanced `/refactor:fast` with parallel execution for directory targets
-- Autonomous `/refactor:plan` with collaborative brainstorming
-- Plan execution `/refactor:implement` with phase-by-phase checkpoints
+- [x] SKILL.md split: 345 lines (~19KB) → 98 lines (<5k tokens) + REFERENCE.md
+- [x] Templates extracted to resources/templates/ (report, session-history schema, config schema)
+- [x] Validation script: scripts/validate-skill.py (29-point scoring, 80% threshold)
+- [x] Dual-keyword description + auto-invocation triggers in SKILL.md
+- [x] install-skill.js updated to copy REFERENCE.md + resources/
+- [x] Breaking: SKILL.md restructured, REFERENCE.md required at project root
 
 ## Architecture & Dependencies
 
 ### Core Components
 
-1. **Skill Definition** (`SKILL.md`) — Core refactoring workflow, decision rules, language discovery
+1. **Skill Definition** (`SKILL.md` + `REFERENCE.md`) — Core workflow (<5k tokens) with detailed strategies in REFERENCE.md
 2. **References** (`references/`) — Smell catalog, refactoring methods, metrics, security patterns, prioritization, per-language guidance
 3. **Commands** (`commands/refactor*.md`) — CLI interface: router, review, fast, plan, implement
 4. **Installation Scripts** (`install-skill.js`, `uninstall-skill.js`) — npm postinstall/preuninstall hooks
