@@ -112,6 +112,7 @@ program
     console.log(`\nSupported tools (${tools.length}):\n`);
     for (const tool of tools) {
       const caps = [];
+      if (tool.capabilities.bestEffort) caps.push("best effort");
       if (tool.capabilities.slashCommands) caps.push("commands");
       if (tool.capabilities.separateReferences) caps.push("refs");
       if (tool.capabilities.workflows) caps.push("workflows");
