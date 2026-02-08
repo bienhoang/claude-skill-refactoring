@@ -109,7 +109,7 @@ function installCommands(packageDir, isGlobal) {
   // Write ownership marker with version for future migrations
   fs.writeFileSync(
     markerPath,
-    `installed-by:claude-skill-refactoring\nversion:${PACKAGE_VERSION}\n`
+    `installed-by:refactoring-kit\nversion:${PACKAGE_VERSION}\n`
   );
 
   const label = isGlobal ? "global (~/.claude/commands/)" : `project (${commandsDir})`;

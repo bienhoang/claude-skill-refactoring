@@ -3,7 +3,7 @@
 ## Directory Structure
 
 ```
-claude-skill-refactoring/
+refactoring-kit/
 ├── SKILL.md                           # Core workflow (<5k tokens)
 ├── REFERENCE.md                       # Detailed phase instructions (on-demand)
 ├── README.md                          # User-facing documentation
@@ -294,7 +294,7 @@ Maps code smells to design pattern solutions for structural refactoring:
 - **Clarity:** Each entry should be actionable and reference relevant files
 - **Breaking changes:** Clearly marked and explained with migration guidance
 
-**Current version:** 5.0.0 (2026-02-08)
+**Current version:** 6.0.0 (2026-02-08)
 
 ## Maintenance & Deprecation
 

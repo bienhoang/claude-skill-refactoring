@@ -1,5 +1,21 @@
 # Changelog
 
+## [6.0.0] - 2026-02-08
+
+### Changed
+- **Breaking:** Package renamed from `claude-skill-refactoring` to `refactoring-kit`
+- **Breaking:** GitHub repository renamed from `bienhoang/claude-skill-refactoring` to `bienhoang/refactoring-kit`
+- All npm install/uninstall commands now use `refactoring-kit`
+- Git clone URLs updated to new repository name
+- Version bump: 5.0.0 → 6.0.0
+
+### Migration from v5
+- Run `npm uninstall -g claude-skill-refactoring && npm install -g refactoring-kit`
+- Or project-level: `npm uninstall claude-skill-refactoring && npm install --save-dev refactoring-kit`
+- No changes to `.refactoring.yaml`, slash commands, or skill behavior
+- GitHub auto-redirects old URLs
+- Existing skill installations in `~/.claude/skills/refactoring/` are compatible
+
 ## [5.0.0] - 2026-02-08
 
 ### Added

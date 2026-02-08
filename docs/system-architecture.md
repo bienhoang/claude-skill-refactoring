@@ -445,7 +445,7 @@ For directory-level refactoring with 3+ independent tasks:
 
 ### Distribution Channels
 
-- **npm Registry:** `npm install -g claude-skill-refactoring` (global) or `npm install --save-dev` (project)
+- **npm Registry:** `npm install -g refactoring-kit` (global) or `npm install --save-dev` (project)
 - **GitHub:** Clone for manual installation
 - **Claude Code Skill Store:** Future distribution channel (planned)
 

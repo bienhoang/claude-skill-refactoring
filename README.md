@@ -1,4 +1,4 @@
-# claude-skill-refactoring
+# refactoring-kit
 
 A [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) skill for **systematic code refactoring** — detect code smells, apply safe transformations, and verify correctness with tests.
 
@@ -36,20 +36,20 @@ When you ask Claude Code to refactor your code, this skill guides it through a s
 
 ```bash
 # Global — available in all projects
-npm install -g claude-skill-refactoring
+npm install -g refactoring-kit
 
 # Project-level — available only in this project
-npm install --save-dev claude-skill-refactoring
+npm install --save-dev refactoring-kit
 ```
 
 ### Manual (git clone)
 
 ```bash
 # Global
-git clone https://github.com/bienhoang/claude-skill-refactoring.git ~/.claude/skills/refactoring
+git clone https://github.com/bienhoang/refactoring-kit.git ~/.claude/skills/refactoring
 
 # Project-level
-git clone https://github.com/bienhoang/claude-skill-refactoring.git .claude/skills/refactoring
+git clone https://github.com/bienhoang/refactoring-kit.git .claude/skills/refactoring
 ```
 
 ## Usage
@@ -304,9 +304,9 @@ SKILL.md is a concise workflow (<5k tokens). Detailed strategies, configuration 
 ## Uninstall
 
 ```bash
-npm uninstall -g claude-skill-refactoring
+npm uninstall -g refactoring-kit
 # or for project-level
-npm uninstall claude-skill-refactoring
+npm uninstall refactoring-kit
 ```
 
 ## License

@@ -1,4 +1,4 @@
-# claude-skill-refactoring: Project Overview & PDR
+# refactoring-kit: Project Overview & PDR
 
 ## Project Vision
 
@@ -286,6 +286,6 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 ## License & Distribution
 
 - **License:** MIT
-- **Repository:** github.com/bienhoang/claude-skill-refactoring
-- **Package:** npm registry (claude-skill-refactoring)
+- **Repository:** github.com/bienhoang/refactoring-kit
+- **Package:** npm registry (refactoring-kit)
 - **Installation:** Global (`npm install -g`) or project-level (`npm install --save-dev`)
