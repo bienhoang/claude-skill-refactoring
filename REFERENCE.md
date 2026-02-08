@@ -46,58 +46,13 @@ def test_existing_behavior_description():
 
 ## Report Template
 
-Present to the user using this structure:
+See `resources/templates/report-template.md` for the full report template with placeholders.
 
-```
-## Refactoring Report: [target]
-
-### Dependency Graph (multi-file targets only)
-​```mermaid
-graph LR
-  A[ModuleA] --> B[ModuleB]
-  B --> C[ModuleC]
-​```
-
-### Severity Summary
-| Severity | Count | Status |
-|----------|-------|--------|
-| Critical | 0 | Resolved |
-| Major | 3 | 2 Resolved, 1 Remaining |
-| Minor | 5 | 3 Resolved, 2 Deferred |
-
-### Metrics (Before → After)
-| Metric | Before | After | Change |
-|--------|--------|-------|--------|
-| Avg Cyclomatic | 18 | 11 | -39% |
-| Lines of Code | 450 | 380 | -16% |
-
-### Methods Applied
-[List each refactoring technique and why it was chosen]
-
-### Remaining Smells
-[Any deferred or new issues for follow-up]
-```
-
-Optionally offer to save report to `./reports/refactoring-report-{YYYY-MM-DD-HHMM}.md`.
+Present report using the template structure: Dependency Graph (multi-file only), Severity Summary, Metrics (Before → After), Methods Applied, Remaining Smells. Optionally offer to save to `./reports/refactoring-report-{YYYY-MM-DD-HHMM}.md`.
 
 ## Session History
 
-Optional trend tracking via `.refactoring-history.json` in project root (suggest adding to `.gitignore`):
-
-```json
-{
-  "version": 1,
-  "sessions": [{
-    "timestamp": "2026-02-08T10:30:00Z",
-    "target": "src/services/",
-    "command": "refactor:fast",
-    "smells_found": { "critical": 2, "major": 5, "minor": 8 },
-    "smells_fixed": { "critical": 2, "major": 4, "minor": 3 },
-    "methods_applied": ["Extract Method", "Move Method"],
-    "metrics": { "before": { "avg_complexity": 18 }, "after": { "avg_complexity": 11 } }
-  }]
-}
-```
+Optional trend tracking via `.refactoring-history.json` in project root (suggest adding to `.gitignore`). Format: see `resources/templates/session-history-schema.json` for the full JSON schema.
 
 **Reading:** At start of Analyze, if history exists and `workflow.history_tracking` is not `false` in `.refactoring.yaml`, display trend summary: "Previous session: X smells found, Y fixed. Trend: [improving/stable/declining]." Trend logic compares last two sessions: improving = smells_found decreased, stable = within ±20%, declining = smells_found increased.
 **Writing:** At end of Report, append session entry. Create file if it doesn't exist. Skip if `workflow.history_tracking` is `false` in config.
@@ -130,64 +85,7 @@ Only parallelize when: target is a directory/module (not single file), 3+ indepe
 
 ## Project Configuration
 
-Optional project-level customization via `.refactoring.yaml` in project root. All sections and fields are optional — missing fields use skill defaults. No config file = default behavior.
-
-```yaml
-# .refactoring.yaml — all fields optional
-
-# Analysis thresholds (override metrics.md defaults)
-thresholds:
-  max_method_lines: 20       # default: ≤20 good, 20-50 acceptable, 50+ refactor
-  max_class_lines: 250       # default: 250 (good), 500+ triggers refactor
-  max_file_lines: 500        # default: 500 (good), 1000+ triggers split
-  max_parameters: 5          # default: 5, 6+ triggers refactor
-  max_cyclomatic_complexity: 10  # default: 10 (low risk), 25+ critical
-  max_cognitive_complexity: 10   # default: 10 (good), 15+ triggers refactor
-
-# Custom smell detectors (added to built-in catalog)
-custom_smells:
-  - name: "Raw SQL"
-    pattern: "query.*\\+"     # regex matched against code text
-    severity: critical         # critical | major | minor
-
-# File exclusion patterns (filter analysis results, not discovery)
-ignore:
-  - "**/generated/**"
-  - "**/migrations/**"
-  - "**/vendor/**"
-
-# Override built-in smell severity levels
-severity_overrides:
-  Long Method: minor
-  Duplicate Code: major
-
-# Workflow behavior
-workflow:
-  skip_phases: []             # safeguard | verify | report (analyze/transform not skippable)
-  parallel: true              # enable parallel refactoring for directory targets
-  git_suggestions: true       # suggest stash/commit/branch operations
-  history_tracking: true      # read/write .refactoring-history.json
-  report_format: markdown     # markdown (full) | minimal (metrics + counts only)
-  save_reports: false         # auto-save reports without prompting
-
-# Per-command defaults (CLI flags override these)
-commands:
-  fast:
-    default_flags: []         # e.g., ["--safe"] to always write characterization tests
-  review:
-    save_report: false        # auto-save review reports
-  plan:
-    branch_prefix: "refactor/"  # git branch prefix for suggestions
-  implement:
-    commit_per_step: true     # suggest commit after each transformation
-
-# Priority scoring weights (tune ROI formula)
-priority:
-  severity_weight: 1          # multiplier for Severity in formula
-  frequency_weight: 1         # multiplier for Frequency in formula
-  impact_weight: 1            # multiplier for Impact in formula
-  effort_divisor: 1           # multiplier for Effort divisor in formula
-```
+Optional project-level customization via `.refactoring.yaml` in project root. All sections and fields are optional — missing fields use skill defaults. No config file = default behavior. Schema: see `resources/templates/config-schema.yaml` for the full example with all fields and defaults.
 
 **Loading:** At start of Analyze (after Scout), check for `.refactoring.yaml`. If found, read as text and apply each section:
 - `thresholds` → override metrics.md default values

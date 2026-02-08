@@ -1,0 +1,56 @@
+# .refactoring.yaml — all fields optional
+# Example configuration with all available fields and defaults.
+# Referenced by REFERENCE.md > Project Configuration
+
+# Analysis thresholds (override metrics.md defaults)
+thresholds:
+  max_method_lines: 20       # default: ≤20 good, 20-50 acceptable, 50+ refactor
+  max_class_lines: 250       # default: 250 (good), 500+ triggers refactor
+  max_file_lines: 500        # default: 500 (good), 1000+ triggers split
+  max_parameters: 5          # default: 5, 6+ triggers refactor
+  max_cyclomatic_complexity: 10  # default: 10 (low risk), 25+ critical
+  max_cognitive_complexity: 10   # default: 10 (good), 15+ triggers refactor
+
+# Custom smell detectors (added to built-in catalog)
+custom_smells:
+  - name: "Raw SQL"
+    pattern: "query.*\\+"     # regex matched against code text
+    severity: critical         # critical | major | minor
+
+# File exclusion patterns (filter analysis results, not discovery)
+ignore:
+  - "**/generated/**"
+  - "**/migrations/**"
+  - "**/vendor/**"
+
+# Override built-in smell severity levels
+severity_overrides:
+  Long Method: minor
+  Duplicate Code: major
+
+# Workflow behavior
+workflow:
+  skip_phases: []             # safeguard | verify | report (analyze/transform not skippable)
+  parallel: true              # enable parallel refactoring for directory targets
+  git_suggestions: true       # suggest stash/commit/branch operations
+  history_tracking: true      # read/write .refactoring-history.json
+  report_format: markdown     # markdown (full) | minimal (metrics + counts only)
+  save_reports: false         # auto-save reports without prompting
+
+# Per-command defaults (CLI flags override these)
+commands:
+  fast:
+    default_flags: []         # e.g., ["--safe"] to always write characterization tests
+  review:
+    save_report: false        # auto-save review reports
+  plan:
+    branch_prefix: "refactor/"  # git branch prefix for suggestions
+  implement:
+    commit_per_step: true     # suggest commit after each transformation
+
+# Priority scoring weights (tune ROI formula)
+priority:
+  severity_weight: 1          # multiplier for Severity in formula
+  frequency_weight: 1         # multiplier for Frequency in formula
+  impact_weight: 1            # multiplier for Impact in formula
+  effort_divisor: 1           # multiplier for Effort divisor in formula
