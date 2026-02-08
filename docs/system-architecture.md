@@ -22,25 +22,37 @@ User Request (natural language or slash command)
 
 ## Component Breakdown
 
-### 1. Skill Definition (`SKILL.md`)
+### 1. Skill Definition (`SKILL.md` and `REFERENCE.md`)
 
 **Purpose:** Master workflow document that Claude follows for all refactoring tasks.
 
-**Key Sections:**
-- **Core Workflow:** 5-phase process (Analyze → Safeguard → Transform → Verify → Report)
-- **Analyze Phase:** Load references, detect smells, score metrics, rank by priority
-- **Safeguard Phase:** Check tests, write characterization tests if needed
-- **Transform Phase:** Apply refactoring methods one at a time, verify after each
-- **Verify Phase:** Run test suite, revert on failure
-- **Report Phase:** Summarize changes, metrics before/after, next steps
-- **Language-Specific Guidance:** Convention discovery workflow + 6-step detection
+**SKILL.md** (~98 lines, ~5KB):
+- **Condensed workflow** — auto-invocation triggers, 5-phase overview with pointers to REFERENCE.md
+- **YAML frontmatter** — dual-keyword description for auto-detection
+- **Auto-Invocation Triggers** — suggestion-only triggers (never auto-execute)
+- **Core Workflow:** 5-phase process overview (Analyze → Safeguard → Transform → Verify → Report) with concise phase descriptions
+- **Language-Specific Guidance:** Convention discovery workflow + routing to language files
 - **Decision Rules:** Edge cases (no tests, unclear behavior, quick cleanup)
+- **Cross-references to REFERENCE.md** for detailed strategies and templates
+
+**REFERENCE.md** (new file at project root, ~13KB):
+- **Characterization Test Strategy** — detailed patterns for writing tests before refactoring
+- **Common Transformation Sequences** — smell-to-refactoring mappings
+- **Report Template** — structured format for presenting findings
+- **Session History** — tracking refactoring sessions in `.refactoring-history.json`
+- **Git Strategy** — suggest-only git practices (stash, branch, commit, squash)
+- **Parallel Refactoring** — batch execution for directory targets with 3+ independent tasks
+- **Project Configuration** — full `.refactoring.yaml` schema with all sections and workflow overrides
+- **Context Optimization** — strategies for efficient analysis of large codebases
+
+**Split Pattern:** SKILL.md contains workflow logic and routing; REFERENCE.md contains detailed strategies, examples, and templates. This split keeps SKILL.md <100 lines while preserving all detailed guidance in REFERENCE.md.
 
 **Data Flow:**
 - Input: target code file(s) or directory
-- Loads: all references based on language(s) detected
+- Route: SKILL.md → REFERENCE.md (for detailed strategies)
+- Loads: references based on language(s) detected + phase-specific conditional references
 - Outputs: analysis report with severity/ROI scoring
-- Conditional: safety checks before transformation
+- Conditional: safety checks before transformation (see REFERENCE.md for detailed test strategies)
 
 ### 2. Command Router (`commands/refactor.md`)
 
@@ -515,7 +527,17 @@ For large codebases (>100 files):
 ## Dependency Graph
 
 ```
-SKILL.md (core workflow)
+SKILL.md (core workflow, ~98 lines)
+├─ REFERENCE.md (detailed strategies, ~13KB)
+│  ├─ Characterization Test Strategy
+│  ├─ Common Transformation Sequences
+│  ├─ Report Template
+│  ├─ Session History
+│  ├─ Git Strategy
+│  ├─ Parallel Refactoring
+│  ├─ Project Configuration (.refactoring.yaml full schema)
+│  └─ Context Optimization
+│
 ├─ references/code-smells.md
 ├─ references/refactoring-methods.md
 ├─ references/metrics.md
@@ -536,5 +558,7 @@ commands/refactor.md (router)
 install-skill.js / uninstall-skill.js
 └─ .claude-skill.json (metadata)
 ```
+
+**Key Change (Phase 01):** SKILL.md now cross-references REFERENCE.md for detailed strategies, keeping workflow document concise while preserving all detailed guidance. Both are required for full functionality.
 
 No external dependencies beyond Claude Code itself.
