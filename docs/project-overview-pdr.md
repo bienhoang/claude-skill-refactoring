@@ -89,6 +89,30 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 - Merge results and full test suite verification to catch interaction issues
 - Applies to `/refactor:fast` when 3+ independent tasks identified
 
+#### Phase 5: Architectural Analysis (v5.0.0 — IN PROGRESS)
+
+**FR5.1: Architectural Style Detection**
+- Detect 8 architectural styles (Layered, Hexagonal, Clean, EDA, Microservices, Modular Monolith, Pipe-and-Filter, Serverless)
+- 3-signal detection: directory patterns (0.3), import flow (0.4), infra scanning (0.3)
+- Confidence scoring: high (>=0.7), medium (0.4-0.69), low (<0.4)
+- User override via `.refactoring.yaml` `architecture.style` config
+
+**FR5.2: Architectural Smell Detection**
+- 12 architectural smells across 3 categories (Structure, Boundary, Distribution)
+- Measurable detection heuristics for every smell
+- Severity classification (critical/major/minor)
+- Integration with existing ROI scoring formula
+
+**FR5.3: Architectural Pattern Recommendations**
+- 13 architectural patterns with YAGNI gates
+- Smell-to-pattern mapping for actionable recommendations
+- Strangler Fig and Branch by Abstraction consolidated from migration-patterns.md
+
+**FR5.4: /refactor:architecture Command**
+- Dedicated deep-dive architectural analysis command
+- Read-only (no code modifications)
+- Architectural Health Report output with style, smells, boundary analysis, recommendations
+
 ### Non-Functional Requirements
 
 **NFR1: Performance**
@@ -136,6 +160,16 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 - [x] Dual-keyword description + auto-invocation triggers in SKILL.md
 - [x] install-skill.js updated to copy REFERENCE.md + resources/
 - [x] Breaking: SKILL.md restructured, REFERENCE.md required at project root
+
+### v5.0.0 (Architectural Analysis)
+
+- [ ] 8 styles detectable with confidence scoring
+- [ ] 12 arch smells with measurable heuristics
+- [ ] 13 patterns with YAGNI gates
+- [ ] /refactor:architecture produces Architectural Health Report
+- [ ] Router routes architecture keywords correctly
+- [ ] SKILL.md <5k tokens after arch additions
+- [ ] migration-patterns.md Strangler Fig/Branch by Abstraction moved (cross-reference works)
 
 ## Architecture & Dependencies
 
@@ -213,6 +247,14 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 - [x] `/refactor:fast` with git stash/commit suggestions and parallel check
 - [x] `/refactor:plan` and `/refactor:implement` with migration-patterns.md reference and conventional commits
 - [x] SKILL.md Parallel Refactoring section with batch execution strategy
+
+### v5.0.0 (2026-02-08) — Architectural Analysis
+
+- [ ] 3 new reference files in references/architecture/ (styles, patterns, smells)
+- [ ] /refactor:architecture command
+- [ ] Router update for architecture keywords
+- [ ] SKILL.md + REFERENCE.md arch analysis integration
+- [ ] Config: architecture section in .refactoring.yaml
 
 ### v2.2.0 (2026-03-01) — Advanced Planning
 

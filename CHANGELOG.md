@@ -1,5 +1,33 @@
 # Changelog
 
+## [5.0.0] - 2026-02-08
+
+### Added
+- **`references/architecture/`** — 3 new architectural reference files:
+  - `architectural-styles.md` — 8 architectural styles with detection heuristics, confidence scoring, transition matrix
+  - `architectural-patterns.md` — 13 architectural patterns with YAGNI gates, smell-to-pattern mapping (includes Strangler Fig and Branch by Abstraction moved from migration-patterns.md)
+  - `architectural-smells.md` — 12 architectural smells across 3 categories (Structure, Boundary, Distribution) with measurable detection heuristics
+- **`/refactor:architecture [target-directory]`** — Deep architectural analysis command: style detection, boundary analysis, pattern recommendations. Read-only.
+- Architecture config section in `.refactoring.yaml`: `style`, `strict_boundaries`, `infra_scan`, `ignore_patterns`
+- Architectural Analysis Strategy section in REFERENCE.md: detection algorithm, confidence scoring, recommendation decision table
+- Architectural analysis conditional in SKILL.md Analyze and Transform phases (directory/module targets only)
+
+### Changed
+- **Breaking:** Router now intercepts "architecture" keyword before scope routing (step 1.5)
+- **Breaking:** SKILL.md Analyze phase includes arch-level analysis for directory targets
+- `references/migration-patterns.md` — Strangler Fig and Branch by Abstraction sections moved to `references/architecture/architectural-patterns.md`; replaced with cross-reference link
+- `references/dependency-analysis.md` — added cross-reference to `architectural-smells.md`
+- `resources/templates/config-schema.yaml` — added `architecture` section
+- `scripts/validate-skill.py` — now validates `references/architecture/` (30-point scoring, was 29)
+- Version bump: 4.0.0 → 5.0.0
+
+### Migration from v4
+- No changes to `.refactoring.yaml` existing sections (thresholds, custom_smells, ignore, etc.)
+- New optional `architecture` section available in `.refactoring.yaml`
+- Existing slash commands (`/refactor:review`, `/refactor:fast`, etc.) behavior unchanged
+- "architecture" keyword now routes to `/refactor:architecture` instead of `/refactor:plan`
+- If you reference Strangler Fig or Branch by Abstraction patterns, they are now in `references/architecture/architectural-patterns.md`
+
 ## [4.0.0] - 2026-02-08
 
 ### Added

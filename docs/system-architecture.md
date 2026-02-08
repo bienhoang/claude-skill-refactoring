@@ -15,6 +15,9 @@ User Request (natural language or slash command)
        ↓
     Load References (code-smells, metrics, security, prioritization, language-specific)
        ↓
+    Conditional: Architectural Analysis (directory/module targets)
+      → Style Detection + Arch Smell Scan + Pattern Recommendations
+       ↓
     Execute Workflow (Analyze → Safeguard → Transform [conditional design-patterns/dependency-analysis] → Verify → Report)
        ↓
     Output Report (findings, metrics, ROI scores, next steps)
@@ -107,6 +110,31 @@ else:
 - Review team submissions for quality
 - Pre-refactoring assessment
 - Security scanning
+
+#### `/refactor:architecture` (`commands/refactor/architecture.md`)
+
+**Purpose:** Deep architectural analysis — style detection, boundary analysis, pattern recommendations. Read-only.
+
+**Workflow:**
+1. Scout target directory structure
+2. Detect architectural style (weighted confidence scoring)
+3. Scan for architectural smells (12 smells across 3 categories)
+4. Score findings with ROI formula
+5. Map smells to recommended patterns (with YAGNI gates)
+6. Generate Architectural Health Report
+
+**References Loaded:**
+- architecture/architectural-styles.md
+- architecture/architectural-smells.md
+- architecture/architectural-patterns.md (conditional: only if smells found)
+- prioritization.md
+
+**Output:**
+- Detected style with confidence level
+- Severity-ranked architectural smells
+- Boundary violation analysis
+- Pattern recommendations (YAGNI-gated)
+- Next steps (link to /refactor:plan for major restructuring)
 
 #### `/refactor:fast` (`commands/refactor/fast.md`) — *Phase 2*
 
@@ -226,6 +254,29 @@ else:
 - Risk profiles and reversibility notes (medium/high risk, partial reversibility)
 - Used in: Transform phase (conditional load for paradigm migrations); Brainstorm phase (identify correct migration sequence)
 
+#### Architectural References (`references/architecture/`)
+
+**`architectural-styles.md`** (~4-5k tokens)
+- 8 architectural styles with detection heuristics
+- Style detection table: directory patterns, import flow rules, infra hints
+- Confidence scoring formula (weighted: dir 0.3, import 0.4, infra 0.3)
+- Style transition matrix with effort/risk ratings
+- Used in: /refactor:architecture (always), Analyze phase (directory targets)
+
+**`architectural-patterns.md`** (~5-7k tokens)
+- 13 architectural patterns with YAGNI gates
+- Smell-to-pattern mapping table
+- Pattern combinations (common pairings)
+- Includes Strangler Fig and Branch by Abstraction (moved from migration-patterns.md)
+- Used in: /refactor:architecture (conditional: when smells found), Transform phase (conditional: arch smells)
+
+**`architectural-smells.md`** (~4-5k tokens)
+- 12 architectural smells in 3 categories (Structure, Boundary, Distribution)
+- Per smell: measurable detection heuristics, severity, fix references
+- Detection checklist for systematic scanning
+- Metrics thresholds (CBO, LCOM, Instability, cycles)
+- Used in: /refactor:architecture (always), Analyze phase (directory targets)
+
 #### Language-Specific References (`references/languages/`)
 
 **Routing** (`_index.md`):
@@ -296,6 +347,11 @@ Each file includes:
       ├─ Load design-patterns.md (if architectural smells detected)
       ├─ Load dependency-analysis.md (if multi-file refactoring planned)
       └─ Load migration-patterns.md (if paradigm migrations detected)
+
+5.5. Architectural Analysis (directory targets only)
+   ├─ Load architectural-styles.md → detect style + confidence
+   ├─ Load architectural-smells.md → scan for arch smells
+   └─ If arch smells found: load architectural-patterns.md → recommendations
 
 6. Analysis
    ├─ Scan code for smells (25+ patterns)
@@ -546,6 +602,9 @@ SKILL.md (core workflow, ~98 lines)
 ├─ references/design-patterns.md (conditional: Transform phase, architectural smells)
 ├─ references/dependency-analysis.md (conditional: Transform phase, multi-file refactoring)
 ├─ references/migration-patterns.md (conditional: Transform phase, paradigm migrations)
+├─ references/architecture/architectural-styles.md (conditional: Analyze phase, directory targets)
+├─ references/architecture/architectural-smells.md (conditional: Analyze phase, directory targets)
+├─ references/architecture/architectural-patterns.md (conditional: Transform phase, arch smells)
 └─ references/languages/{language}.md
    └─ references/languages/_index.md
 
@@ -553,7 +612,8 @@ commands/refactor.md (router)
 ├─ commands/refactor/review.md
 ├─ commands/refactor/fast.md
 ├─ commands/refactor/plan.md (loads dependency-analysis.md in Scout; design-patterns.md & migration-patterns.md in Brainstorm)
-└─ commands/refactor/implement.md
+├─ commands/refactor/implement.md
+└─ commands/refactor/architecture.md
 
 install-skill.js / uninstall-skill.js
 └─ .claude-skill.json (metadata)

@@ -8,7 +8,7 @@ claude-skill-refactoring/
 ├── REFERENCE.md                       # Detailed phase instructions (on-demand)
 ├── README.md                          # User-facing documentation
 ├── CHANGELOG.md                       # Version history
-├── package.json                       # npm metadata (v4.0.0)
+├── package.json                       # npm metadata (v5.0.0)
 ├── .claude-skill.json                 # Skill registration
 ├── LICENSE                            # MIT license
 │
@@ -19,7 +19,7 @@ claude-skill-refactoring/
 │       └── config-schema.yaml         # Full .refactoring.yaml example
 │
 ├── scripts/
-│   └── validate-skill.py             # 29-point skill validation script
+│   └── validate-skill.py             # 30-point skill validation script
 │
 ├── commands/                          # CLI slash commands
 │   ├── refactor.md                    # /refactor — intelligent router
@@ -27,7 +27,8 @@ claude-skill-refactoring/
 │       ├── review.md                  # /refactor:review — read-only analysis
 │       ├── fast.md                    # /refactor:fast — autonomous refactoring
 │       ├── plan.md                    # /refactor:plan — collaborative planning
-│       └── implement.md               # /refactor:implement — plan execution
+│       ├── implement.md               # /refactor:implement — plan execution
+│       └── architecture.md            # /refactor:architecture — arch analysis
 │
 ├── references/                        # AI-loadable knowledge bases
 │   ├── code-smells.md                 # 25+ structural smells (250+ LOC)
@@ -38,6 +39,10 @@ claude-skill-refactoring/
 │   ├── dependency-analysis.md         # Circular deps, coupling, import graphs
 │   ├── design-patterns.md             # Smell-to-pattern mapping, YAGNI gate
 │   ├── migration-patterns.md          # Paradigm migration sequences (5 types)
+│   ├── architecture/
+│   │   ├── architectural-styles.md    # 8 styles + detection heuristics
+│   │   ├── architectural-patterns.md  # 13 patterns + YAGNI gates
+│   │   └── architectural-smells.md    # 12 smells + measurable detection
 │   └── languages/
 │       ├── _index.md                  # Language routing table
 │       ├── python.md                  # Python-specific patterns
@@ -237,6 +242,7 @@ Maps code smells to design pattern solutions for structural refactoring:
 
 | Keyword Match | Route |
 |---------------|-------|
+| architecture / architectural / arch-review | `/refactor:architecture` |
 | review / analyze / audit / scan | `/refactor:review` |
 | Single file | `/refactor:fast` |
 | Directory / module | `/refactor:plan` |
@@ -288,7 +294,7 @@ Maps code smells to design pattern solutions for structural refactoring:
 - **Clarity:** Each entry should be actionable and reference relevant files
 - **Breaking changes:** Clearly marked and explained with migration guidance
 
-**Current version:** 4.0.0 (2026-02-08)
+**Current version:** 5.0.0 (2026-02-08)
 
 ## Maintenance & Deprecation
 

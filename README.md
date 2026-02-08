@@ -25,6 +25,9 @@ When you ask Claude Code to refactor your code, this skill guides it through a s
 | `references/design-patterns.md` | Smell-to-pattern mapping, YAGNI gate, modern alternatives, anti-patterns to avoid |
 | `references/migration-patterns.md` | Step-by-step migration sequences: callback→async, class→functional, monolith→service, sync→async, ORM |
 | `references/ci-integration.md` | GitHub Actions pipeline, pre-commit hooks, quality gate definitions (hard/soft blocks), integration guidance |
+| `references/architecture/architectural-styles.md` | 8 architectural styles with detection heuristics, confidence scoring, transition matrix |
+| `references/architecture/architectural-patterns.md` | 13 architectural patterns with YAGNI gates, smell-to-pattern mapping |
+| `references/architecture/architectural-smells.md` | 12 architectural smells (Structure, Boundary, Distribution) with measurable detection |
 | `references/languages/` | Per-language refactoring patterns with convention discovery (Python, JS/TS, Java, Go, Rust, PHP, Ruby, C#, Swift, Kotlin, C/C++, Dart, Scala, Elixir, Shell/Bash, Lua) |
 
 ## Installation
@@ -67,15 +70,27 @@ Once installed, the skill activates automatically when you ask Claude Code to re
 
 ## Slash Commands
 
-Once installed, you get five slash commands:
+Once installed, you get six slash commands:
 
 ### `/refactor [target]` — Intelligent Router
 
 Automatically detects the best approach based on intent and scope:
+- Architecture/arch-review keywords → routes to `/refactor:architecture`
 - Review/analyze/audit keywords → routes to `/refactor:review`
 - Single file → routes to `/refactor:fast`
 - Directory or module → routes to `/refactor:plan`
 - Plan file path → routes to `/refactor:implement`
+
+### `/refactor:architecture [target-directory]` — Architectural Analysis
+
+Deep architectural analysis: detect style, scan for arch-level smells, recommend patterns. Read-only (no code modifications). Requires directory target.
+
+**Examples:**
+```
+/refactor:architecture src/
+/refactor:architecture src/services/
+/refactor:architecture . "focus on boundary violations"
+```
 
 ### `/refactor:review [target]` — Read-Only Analysis
 
@@ -190,6 +205,12 @@ priority:                # Tune ROI scoring formula weights
   frequency_weight: 1
   impact_weight: 1
   effort_divisor: 1
+
+architecture:            # Architectural analysis settings
+  style: ""              # Override auto-detection (e.g., "hexagonal")
+  strict_boundaries: false  # Treat boundary violations as critical
+  infra_scan: true       # Scan Docker/K8s/Terraform for hints
+  ignore_patterns: []    # Glob patterns to skip in arch analysis
 ```
 
 See `SKILL.md` for detailed behavior of each section.
@@ -245,6 +266,10 @@ Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` 
     ├── design-patterns.md            # Smell-to-pattern mapping
     ├── migration-patterns.md         # Paradigm migration sequences
     ├── ci-integration.md             # CI/CD pipeline and quality gates
+    ├── architecture/
+    │   ├── architectural-styles.md   # 8 styles + detection heuristics
+    │   ├── architectural-patterns.md # 13 patterns + YAGNI gates
+    │   └── architectural-smells.md   # 12 smells + measurable detection
     └── languages/                    # Per-language patterns with convention discovery
         ├── _index.md                 # Language routing (extensions → file mapping)
         ├── python.md
@@ -270,7 +295,8 @@ Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` 
     ├── review.md                     # /refactor:review (read-only analysis)
     ├── fast.md                       # /refactor:fast
     ├── plan.md                       # /refactor:plan
-    └── implement.md                  # /refactor:implement
+    ├── implement.md                  # /refactor:implement
+    └── architecture.md              # /refactor:architecture (arch analysis)
 ```
 
 SKILL.md is a concise workflow (<5k tokens). Detailed strategies, configuration schema, and templates are in REFERENCE.md and resources/templates/, loaded on-demand using Claude's progressive disclosure pattern.

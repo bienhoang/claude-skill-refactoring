@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate Claude Code skill structure and quality. 29-point scoring system."""
+"""Validate Claude Code skill structure and quality. 30-point scoring system."""
 
 import sys
 import os
@@ -7,7 +7,7 @@ import re
 import json
 
 # Constants
-PASS_THRESHOLD = 24
+PASS_THRESHOLD = 25
 MAX_TOKENS = 5000
 MAX_NAME_LEN = 64
 MAX_DESC_LEN = 1024
@@ -93,7 +93,7 @@ def validate_critical(skill_path, content):
 
 
 def validate_structure(skill_path):
-    """Run 4 structure checks. Returns list of check results."""
+    """Run 5 structure checks. Returns list of check results."""
     checks = []
 
     # 1. references/ exists with .md files
@@ -105,6 +105,16 @@ def validate_structure(skill_path):
     refs_valid = md_count > 0
     detail = f" ({md_count} files)" if refs_valid else ""
     checks.append((f"references/ exists{detail}", refs_valid, 2 if refs_valid else 0, 2, ""))
+
+    # 1.5. references/architecture/ exists with 3 .md files
+    arch_dir = os.path.join(skill_path, 'references', 'architecture')
+    arch_count = 0
+    if os.path.isdir(arch_dir):
+        arch_count = sum(1 for f in os.listdir(arch_dir) if f.endswith('.md'))
+    arch_valid = arch_count >= 3
+    detail = f" ({arch_count} files)" if arch_valid else f" ({arch_count}/3 files)"
+    checks.append((f"references/architecture/ exists{detail}", arch_valid,
+                    1 if arch_valid else 0, 1, ""))
 
     # 2. commands/ exists with .md files
     cmds_dir = os.path.join(skill_path, 'commands')
@@ -183,8 +193,8 @@ def print_results(all_checks, score, max_score):
 
     tiers = [
         ("CRITICAL", all_checks[:5]),
-        ("STRUCTURE", all_checks[5:9]),
-        ("QUALITY", all_checks[9:]),
+        ("STRUCTURE", all_checks[5:10]),
+        ("QUALITY", all_checks[10:]),
     ]
 
     for tier_name, checks in tiers:
