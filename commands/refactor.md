@@ -18,6 +18,11 @@ argument-hint: [target]
 → `/refactor:review <target>` (strip the keyword, pass remaining as target)
 - **Note:** If target is a `.md` plan file AND contains a review keyword (e.g., "review my plan.md"), prefer plan routing (Step 2) — the user likely wants to execute the plan, not review it
 
+**1.5. Check for architecture intent:**
+- If `$ARGUMENTS` contains architecture keywords: "architecture", "architectural", "arch-review", "style detection", "boundary analysis", "layer violations" as standalone words (not inside file paths)
+- Or if `$ARGUMENTS` starts with `--architecture` or `--arch`
+→ `/refactor:architecture <target>` (strip the keyword, pass remaining as target)
+
 **2. Check for existing plan:**
 - If `$ARGUMENTS` is a path to a `.md` plan file → `/refactor:implement <path>`
 - If active refactoring plan exists in `./plans/` matching "refactor" → `/refactor:implement`
@@ -36,12 +41,13 @@ argument-hint: [target]
 **D) Directory / Module** (target is a directory like `src/services/`, `lib/`)
 → `/refactor:plan <target>`
 
-**E) Large Scope** (keywords: architecture, system, module, large, entire, whole, codebase)
+**E) Large Scope** (keywords: system, module, large, entire, whole, codebase)
 → `/refactor:plan <target>`
 
 **F) Ambiguous** (cannot determine scope from arguments)
 → Use `AskUserQuestion` with options:
   - "/refactor:review — Read-only analysis report"
+  - "/refactor:architecture — Architectural style & smell analysis"
   - "/refactor:fast — Quick autonomous refactoring"
   - "/refactor:plan — Brainstorm & plan first"
   - "/refactor:implement — Execute with review-then-apply"
