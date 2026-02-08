@@ -163,13 +163,23 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 
 ### v5.0.0 (Architectural Analysis)
 
-- [ ] 8 styles detectable with confidence scoring
-- [ ] 12 arch smells with measurable heuristics
-- [ ] 13 patterns with YAGNI gates
-- [ ] /refactor:architecture produces Architectural Health Report
-- [ ] Router routes architecture keywords correctly
-- [ ] SKILL.md <5k tokens after arch additions
-- [ ] migration-patterns.md Strangler Fig/Branch by Abstraction moved (cross-reference works)
+- [x] 8 styles detectable with confidence scoring
+- [x] 12 arch smells with measurable heuristics
+- [x] 13 patterns with YAGNI gates
+- [x] /refactor:architecture produces Architectural Health Report
+- [x] Router routes architecture keywords correctly
+- [x] SKILL.md <5k tokens after arch additions
+- [x] migration-patterns.md Strangler Fig/Branch by Abstraction moved (cross-reference works)
+
+### v6.0.0 (CLI Framework & Multi-Tool Support)
+
+- [x] Commander-based CLI with install/uninstall/tools subcommands
+- [x] Adapter registry pattern with Claude Code adapter implementation
+- [x] Package rename in package.json and documentation
+- [x] bin entry exposes `refactoring-kit` command globally
+- [x] 15 CLI tests covering install, uninstall, tools, registry, error handling
+- [x] Documentation: CLI architecture section in code-standards.md
+- [x] Breaking: CLI moved from npm postinstall hook to dedicated executable
 
 ## Architecture & Dependencies
 
@@ -178,7 +188,8 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 1. **Skill Definition** (`SKILL.md` + `REFERENCE.md`) — Core workflow (<5k tokens) with detailed strategies in REFERENCE.md
 2. **References** (`references/`) — Smell catalog, refactoring methods, metrics, security patterns, prioritization, per-language guidance
 3. **Commands** (`commands/refactor*.md`) — CLI interface: router, review, fast, plan, implement
-4. **Installation Scripts** (`install-skill.js`, `uninstall-skill.js`) — npm postinstall/preuninstall hooks
+4. **CLI Framework** (`cli.js`, `adapters/`) — Commander-based executable with multi-tool support via adapter pattern (v6.0.0+)
+5. **Installation Scripts** (`install-skill.js`, `uninstall-skill.js`) — npm postinstall/preuninstall hooks coordinating with CLI framework
 
 ### Reference Files Breakdown
 
@@ -250,11 +261,21 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 
 ### v5.0.0 (2026-02-08) — Architectural Analysis
 
-- [ ] 3 new reference files in references/architecture/ (styles, patterns, smells)
-- [ ] /refactor:architecture command
-- [ ] Router update for architecture keywords
-- [ ] SKILL.md + REFERENCE.md arch analysis integration
-- [ ] Config: architecture section in .refactoring.yaml
+- [x] 3 new reference files in references/architecture/ (styles, patterns, smells)
+- [x] /refactor:architecture command
+- [x] Router update for architecture keywords
+- [x] SKILL.md + REFERENCE.md arch analysis integration
+- [x] Config: architecture section in .refactoring.yaml
+
+### v6.0.0 (2026-02-09) — CLI Framework & Multi-Tool Support
+
+- [x] Commander-based CLI with install/uninstall/tools subcommands
+- [x] Adapter pattern for multi-tool support (Claude Code, future: VS Code, etc.)
+- [x] Package renamed: claude-skill-refactoring → refactoring-kit
+- [x] bin entry in package.json: `refactoring-kit` executable
+- [x] Test suite: 15 CLI tests in tests/phase-02-cli.test.js
+- [x] Documentation: CLI architecture in code-standards.md
+- [x] Multi-tool registry via adapters/registry.js
 
 ### v2.2.0 (2026-03-01) — Advanced Planning
 

@@ -8,9 +8,14 @@ refactoring-kit/
 ├── REFERENCE.md                       # Detailed phase instructions (on-demand)
 ├── README.md                          # User-facing documentation
 ├── CHANGELOG.md                       # Version history
-├── package.json                       # npm metadata (v5.0.0)
+├── package.json                       # npm metadata (v6.0.0, bin entry for cli.js)
+├── cli.js                             # Commander-based CLI (NEW — Phase 02)
 ├── .claude-skill.json                 # Skill registration
 ├── LICENSE                            # MIT license
+│
+├── adapters/                          # Multi-tool adapters (NEW — Phase 02)
+│   ├── registry.js                    # Tool adapter registry
+│   └── claude-code.js                 # Claude Code adapter
 │
 ├── resources/
 │   └── templates/
@@ -64,6 +69,9 @@ refactoring-kit/
 │
 ├── install-skill.js                   # postinstall hook — copy skill to ~/.claude/skills/
 ├── uninstall-skill.js                 # preuninstall hook — remove skill files
+│
+├── tests/                             # Test suite (NEW — Phase 02)
+│   └── phase-02-cli.test.js          # CLI command tests (install, uninstall, tools)
 │
 ├── docs/                              # Internal documentation (this folder)
 │   ├── project-overview-pdr.md        # Project vision, PDR, roadmap
@@ -222,6 +230,89 @@ Maps code smells to design pattern solutions for structural refactoring:
 - **Modern Alternatives:** DI over Singleton, closures over Strategy, reactive streams over Observer, composition over Template Method
 - **Anti-Patterns:** Premature abstraction, God Strategy, pattern for pattern's sake, inheritance addiction
 
+## CLI Framework (Phase 02)
+
+### Commander-Based CLI Architecture
+
+**Primary File:** `cli.js` (using npm `commander` v14.0.3)
+
+Provides three subcommands for programmatic skill installation and multi-tool support:
+
+#### `install` Command
+```bash
+refactoring-kit install [--tool=<tools>] [--global] [--dry-run]
+```
+- **Purpose:** Copy skill files to tool-specific locations (Claude Code, VS Code, etc.)
+- **Default:** Installs for `claude-code` at project level
+- **Options:**
+  - `--tool <tools>` — Comma-separated tool names (default: "claude-code")
+  - `--global` — Install globally instead of project-level
+  - `--dry-run` — Preview installation without writing files
+- **Implementation:** Uses adapter pattern via `adapters/registry.js`
+- **Behavior:** Calls adapter's `install()` method; aggregates results; exits 1 on error
+
+#### `uninstall` Command
+```bash
+refactoring-kit uninstall [--tool=<tools>] [--global] [--dry-run]
+```
+- **Purpose:** Remove skill files from tool-specific locations
+- **Options:** Same as install
+- **Implementation:** Uses adapter pattern via `adapters/registry.js`
+- **Behavior:** Calls adapter's `uninstall()` method; exits 1 on error
+
+#### `tools` Command
+```bash
+refactoring-kit tools
+```
+- **Purpose:** List all supported AI coding tools and their capabilities
+- **Output:** Formatted table showing tool name, display name, and capability flags (commands, refs, workflows, globs)
+- **Implementation:** Uses `registry.list()` to enumerate adapters
+
+### Adapter Pattern (Multi-Tool Support)
+
+**Registry:** `adapters/registry.js`
+- Maintains map of tool names → adapter objects
+- Provides `get(toolName)` to fetch specific adapter
+- Provides `list()` to enumerate all registered adapters
+- Throws error if adapter not found
+
+**Adapter Interface:**
+```javascript
+{
+  name: "claude-code",                    // Machine-readable identifier
+  displayName: "Claude Code",             // Human-readable name
+  capabilities: {
+    slashCommands: true,                  // Supports /refactor slash commands
+    separateReferences: true,             // Stores references separately
+    workflows: true,                      // Supports .claude workflows
+    fileGlobs: true                       // Supports file glob filtering
+  },
+  install({ packageDir, scope, projectRoot, dryRun }) { ... },
+  uninstall({ scope, projectRoot, dryRun }) { ... }
+}
+```
+
+**Current Adapter:** `adapters/claude-code.js`
+- Handles installation for Claude Code globally (`~/.claude/skills/refactoring`) or project-level (`.claude/skills/refactoring`)
+- Coordinates with postinstall hook (`install-skill.js`)
+- Returns `{ success, message, files }` for each operation
+
+### Testing (Phase 02)
+
+**Test File:** `tests/phase-02-cli.test.js` (15 tests)
+
+Coverage includes:
+1. **Install command:** global vs project scope, dry-run validation
+2. **Uninstall command:** file removal, error handling
+3. **Tools command:** output formatting, capability flag validation
+4. **Registry:** adapter lookup, enumeration
+5. **Error handling:** invalid tool names, file system errors
+
+Run via:
+```bash
+npm test
+```
+
 ## Workflow Standards
 
 ### Skill Activation Workflow
@@ -294,7 +385,7 @@ Maps code smells to design pattern solutions for structural refactoring:
 - **Clarity:** Each entry should be actionable and reference relevant files
 - **Breaking changes:** Clearly marked and explained with migration guidance
 
-**Current version:** 6.0.0 (2026-02-08)
+**Current version:** 6.0.0 (2026-02-09) — Phase 02 CLI Framework complete
 
 ## Maintenance & Deprecation
 
