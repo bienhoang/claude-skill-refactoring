@@ -1,6 +1,6 @@
 # refactoring-kit
 
-A [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) skill for **systematic code refactoring** — detect code smells, apply safe transformations, and verify correctness with tests.
+A **universal refactoring skill for AI coding tools** — detect code smells, apply safe transformations, and verify correctness with tests. Supports **14 AI tools** including Claude Code, Cursor, Windsurf, Copilot, and more.
 
 ## What it does
 
@@ -30,31 +30,70 @@ When you ask Claude Code to refactor your code, this skill guides it through a s
 | `references/architecture/architectural-smells.md` | 12 architectural smells (Structure, Boundary, Distribution) with measurable detection |
 | `references/languages/` | Per-language refactoring patterns with convention discovery (Python, JS/TS, Java, Go, Rust, PHP, Ruby, C#, Swift, Kotlin, C/C++, Dart, Scala, Elixir, Shell/Bash, Lua) |
 
+## Supported Tools
+
+| Tool | Adapter | Format | Scope |
+|------|---------|--------|-------|
+| **Claude Code** | `claude-code` | `.claude/skills/` + slash commands | Global & Project |
+| **Cursor** | `cursor` | `.cursor/rules/` markdown | Global & Project |
+| **Windsurf** | `windsurf` | `.windsurfrules` + `.windsurf/rules/` | Global & Project |
+| **Gemini CLI** | `gemini-cli` | `GEMINI.md` sections | Project |
+| **Codex CLI** | `codex-cli` | `AGENTS.md` sections | Project |
+| **GitHub Copilot** | `copilot` | `.github/copilot-instructions.md` + `.instructions.md` | Project |
+| **Roo Code** | `roo-code` | `.roomodes` JSON + `rules-*/` directories | Project |
+| **Antigravity** | `antigravity` | `.agent/skills/refactoring/` | Global & Project |
+| **OpenCode** | `opencode` | `AGENTS.md` (Codex-compatible markers) | Project |
+| **Continue.dev** | `continue-dev` | `.prompt` files (Handlebars) | Project |
+| **CodeBuddy** | `codebuddy` | `.codebuddy/commands/` markdown | Global & Project |
+| **Kiro** | `kiro` | `.kiro/specs/` EARS format (limited) | Project |
+| **Trae** | `trae` | `.trae/rules/` markdown (best effort) | Project |
+| **Qoder** | `qoder` | `.qoder/rules/` markdown (best effort) | Project |
+
+Run `npx refactoring-kit tools` to see the full list with capabilities.
+
 ## Installation
 
 ### Via npm (recommended)
 
 ```bash
-# Global — available in all projects
+# Global — available in all projects (Claude Code default)
 npm install -g refactoring-kit
 
 # Project-level — available only in this project
 npm install --save-dev refactoring-kit
 ```
 
+### Multi-tool install via CLI
+
+```bash
+# Install for specific tools
+npx refactoring-kit install --tool=cursor
+npx refactoring-kit install --tool=windsurf,copilot
+npx refactoring-kit install --tool=cursor --global
+
+# Preview what would be installed
+npx refactoring-kit install --tool=cursor --dry-run
+
+# Uninstall from specific tools
+npx refactoring-kit uninstall --tool=cursor
+
+# List all supported tools
+npx refactoring-kit tools
+```
+
 ### Manual (git clone)
 
 ```bash
-# Global
+# Global (Claude Code only)
 git clone https://github.com/bienhoang/refactoring-kit.git ~/.claude/skills/refactoring
 
-# Project-level
+# Project-level (Claude Code only)
 git clone https://github.com/bienhoang/refactoring-kit.git .claude/skills/refactoring
 ```
 
 ## Usage
 
-Once installed, the skill activates automatically when you ask Claude Code to refactor. You can also use slash commands for more control.
+Once installed, the skill activates automatically when you ask your AI tool to refactor. For Claude Code, you can also use slash commands for more control.
 
 ```
 # Natural language — Claude detects the skill automatically
@@ -64,7 +103,7 @@ Once installed, the skill activates automatically when you ask Claude Code to re
 "this class is too large, help me split it"
 "improve the code quality of src/utils.ts"
 
-# Or use slash commands (see below)
+# Or use slash commands (Claude Code only — see below)
 /refactor src/utils.ts
 ```
 
@@ -245,59 +284,39 @@ Disable with `workflow.history_tracking: false` in `.refactoring.yaml`. Consider
 
 ## How it works
 
-Claude Code loads skills from `~/.claude/skills/` (global) or `.claude/skills/` (project). This package copies the skill files and slash commands to the appropriate locations on `npm install` and removes them on `npm uninstall`.
+The package uses an **adapter architecture** to support multiple AI coding tools. Each tool gets its own adapter that translates the canonical skill content into the tool's native format.
+
+```bash
+# Default: Claude Code adapter (via npm postinstall hook)
+npm install -g refactoring-kit
+
+# Explicit: install for specific tools
+npx refactoring-kit install --tool=cursor,windsurf
+```
+
+### Claude Code layout
 
 ```
 ~/.claude/skills/refactoring/
 ├── SKILL.md                          # Core workflow (<5k tokens)
 ├── REFERENCE.md                      # Detailed phase instructions (on-demand)
-├── resources/
-│   └── templates/
-│       ├── report-template.md        # Refactoring report template
-│       ├── session-history-schema.json # Session history JSON schema
-│       └── config-schema.yaml        # Full .refactoring.yaml example
-└── references/
-    ├── code-smells.md                # Smell catalog (loaded when analyzing)
-    ├── refactoring-methods.md        # Method catalog (loaded when transforming)
-    ├── metrics.md                    # Quantitative scoring thresholds
-    ├── security-smells.md            # Security pattern detection
-    ├── prioritization.md             # ROI-based fix ordering
-    ├── dependency-analysis.md        # Import graph and coupling analysis
-    ├── design-patterns.md            # Smell-to-pattern mapping
-    ├── migration-patterns.md         # Paradigm migration sequences
-    ├── ci-integration.md             # CI/CD pipeline and quality gates
-    ├── architecture/
-    │   ├── architectural-styles.md   # 8 styles + detection heuristics
-    │   ├── architectural-patterns.md # 13 patterns + YAGNI gates
-    │   └── architectural-smells.md   # 12 smells + measurable detection
-    └── languages/                    # Per-language patterns with convention discovery
-        ├── _index.md                 # Language routing (extensions → file mapping)
-        ├── python.md
-        ├── javascript-typescript.md
-        ├── java.md
-        ├── go.md
-        ├── rust.md
-        ├── php.md
-        ├── ruby.md
-        ├── csharp.md
-        ├── swift.md
-        ├── kotlin.md
-        ├── cpp.md
-        ├── dart.md
-        ├── scala.md
-        ├── elixir.md
-        ├── shell-bash.md
-        └── lua.md
+├── resources/templates/              # Report template, schemas
+└── references/                       # 22 reference files (smells, metrics, languages)
 
 ~/.claude/commands/
 ├── refactor.md                       # Router (intelligent routing)
-└── refactor/
-    ├── review.md                     # /refactor:review (read-only analysis)
-    ├── fast.md                       # /refactor:fast
-    ├── plan.md                       # /refactor:plan
-    ├── implement.md                  # /refactor:implement
-    └── architecture.md              # /refactor:architecture (arch analysis)
+└── refactor/                         # 5 subcommands (review, fast, plan, implement, architecture)
 ```
+
+### Other tools
+
+Each adapter places files in the tool's expected location:
+- **Cursor**: `.cursor/rules/refactoring-skill.mdc` (with glob frontmatter)
+- **Windsurf**: `.windsurfrules` section + `.windsurf/rules/` directory
+- **Copilot**: `.github/copilot-instructions.md` section + `.instructions.md` files
+- **Roo Code**: `.roomodes` JSON (6 custom modes) + `rules-refactoring-*/` directories
+- **Continue.dev**: `.prompt` files with Handlebars template syntax
+- And more — run `npx refactoring-kit tools` for the full list
 
 SKILL.md is a concise workflow (<5k tokens). Detailed strategies, configuration schema, and templates are in REFERENCE.md and resources/templates/, loaded on-demand using Claude's progressive disclosure pattern.
 

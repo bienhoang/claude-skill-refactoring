@@ -1,7 +1,7 @@
 {
   "name": "refactoring-kit",
-  "version": "6.0.0",
-  "description": "Claude Code skill for systematic code refactoring with code smell detection, safe transformation, and test verification",
+  "version": "7.0.0",
+  "description": "Universal refactoring skill for AI coding tools — supports 14 tools including Claude Code, Cursor, Windsurf, Copilot, and more",
   "keywords": [
     "claude-code",
     "claude-skill",
@@ -11,7 +11,13 @@
     "code-quality",
     "clean-code",
     "testing",
-    "ai-coding"
+    "ai-coding",
+    "cursor",
+    "windsurf",
+    "copilot",
+    "gemini",
+    "codex",
+    "multi-tool"
   ],
   "author": "bienhoang",
   "license": "MIT",

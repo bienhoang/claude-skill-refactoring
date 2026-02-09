@@ -1,5 +1,31 @@
 # Changelog
 
+## [7.0.0] - 2026-02-09
+
+### Added
+- **Multi-tool adapter architecture** — BaseAdapter abstract class with convention-based registry discovery
+- **14 tool adapters** across 4 tiers:
+  - **Tier 1 (full fidelity):** Cursor (`.cursor/rules/`), Windsurf (`.windsurfrules` + `.windsurf/rules/`), Gemini CLI (`GEMINI.md`), Codex CLI (`AGENTS.md`)
+  - **Tier 2 (high fidelity):** Copilot (`.github/copilot-instructions.md` + `.instructions.md`), Roo Code (`.roomodes` JSON + `rules-*/`), Antigravity (`.agent/skills/`), OpenCode (`AGENTS.md` with custom markers for Codex coexistence)
+  - **Tier 3 (adapted format):** Continue.dev (`.prompt` files with Handlebars), CodeBuddy (`.codebuddy/commands/` with `@` refs), Kiro (`.kiro/specs/` EARS format, limited)
+  - **Tier 4 (best-effort):** Trae (`.trae/rules/` markdown), Qoder (`.qoder/rules/` with inlined metrics, Agent/Quest mode hints)
+- **Content transformation utilities** (`adapters/content-utils.js`): `stripClaudeFrontmatter`, `stripClaudeDirectives`, `truncateToLimit`, `wrapWithMarkers`, `appendToExistingFile`, `validateMarkers`
+- **`bestEffort` capability flag** for Tier 4 adapters with `[best effort]` label in CLI output
+- **172 tests** across 6 test files covering all adapters, CLI, and edge cases
+
+### Changed
+- **Breaking:** `refactoring-kit tools` now shows 14 adapters (was 1)
+- **Breaking:** `refactoring-kit install --tool=<name>` supports all 14 tools
+- CLI `tools` command displays capability flags: commands, refs, workflows, globs, best effort
+- `install-skill.js` and `uninstall-skill.js` updated to delegate to adapter registry
+- Version bump: 6.0.0 → 7.0.0
+
+### Migration from v6
+- No changes to `.refactoring.yaml`, slash commands, or skill behavior for Claude Code users
+- `npm install -g refactoring-kit` still defaults to `--tool=claude-code`
+- New: `npx refactoring-kit install --tool=cursor,windsurf` to install for other tools
+- Run `npx refactoring-kit tools` to see all supported tools
+
 ## [6.0.0] - 2026-02-08
 
 ### Changed

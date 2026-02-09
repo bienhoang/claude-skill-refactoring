@@ -2,7 +2,7 @@
 
 ## Project Vision
 
-Empower Claude Code users with a systematic, LLM-guided code refactoring skill that detects code smells, applies safe transformations, verifies correctness with tests, and generates quantitative reports — enabling high-confidence refactoring workflows at scale.
+Empower AI coding tool users with a systematic, LLM-guided code refactoring skill that detects code smells, applies safe transformations, verifies correctness with tests, and generates quantitative reports — enabling high-confidence refactoring workflows at scale.
 
 ## Product Development Requirements
 
@@ -181,6 +181,18 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 - [x] Documentation: CLI architecture section in code-standards.md
 - [x] Breaking: CLI moved from npm postinstall hook to dedicated executable
 
+### v7.0.0 (Multi-Tool Adapters — 14 Tools)
+
+- [x] BaseAdapter abstract class with convention-based registry discovery
+- [x] Tier 1 adapters (full fidelity): Cursor, Windsurf, Gemini CLI, Codex CLI
+- [x] Tier 2 adapters (high fidelity): Copilot, Roo Code, Antigravity, OpenCode
+- [x] Tier 3 adapters (adapted format): Continue.dev, CodeBuddy, Kiro (limited)
+- [x] Tier 4 adapters (best-effort): Trae, Qoder
+- [x] Content transformation utilities: stripClaudeFrontmatter, stripClaudeDirectives, validateMarkers
+- [x] 172 tests across 6 test files
+- [x] bestEffort capability flag with CLI label display
+- [x] install-skill.js and uninstall-skill.js delegate to adapter registry
+
 ## Architecture & Dependencies
 
 ### Core Components
@@ -276,6 +288,17 @@ Empower Claude Code users with a systematic, LLM-guided code refactoring skill t
 - [x] Test suite: 15 CLI tests in tests/phase-02-cli.test.js
 - [x] Documentation: CLI architecture in code-standards.md
 - [x] Multi-tool registry via adapters/registry.js
+
+### v7.0.0 (2026-02-09) — Multi-Tool Adapters (14 Tools)
+
+- [x] BaseAdapter abstract class with convention-based discovery (adapters/base-adapter.js)
+- [x] Content transformation utilities (adapters/content-utils.js)
+- [x] Tier 1 — Cursor (.cursor/rules/), Windsurf (.windsurfrules), Gemini CLI (GEMINI.md), Codex CLI (AGENTS.md)
+- [x] Tier 2 — Copilot (.github/copilot-instructions.md), Roo Code (.roomodes JSON), Antigravity (.agent/skills/), OpenCode (AGENTS.md with custom markers)
+- [x] Tier 3 — Continue.dev (.prompt Handlebars), CodeBuddy (.codebuddy/commands/), Kiro (.kiro/specs/ EARS, limited)
+- [x] Tier 4 — Trae (.trae/rules/ best-effort), Qoder (.qoder/rules/ best-effort)
+- [x] 172 tests across 6 test files (phase-01 through phase-06)
+- [x] bestEffort capability flag and CLI display
 
 ### v2.2.0 (2026-03-01) — Advanced Planning
 

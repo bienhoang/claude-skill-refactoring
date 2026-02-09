@@ -2,7 +2,7 @@
 
 ## High-Level Design
 
-Claude-skill-refactoring is a **Claude Code skill** — a modular add-on that augments Claude's code refactoring capabilities with structured knowledge and workflows. The system follows a **progressive disclosure** pattern: references are loaded on-demand, not preloaded.
+refactoring-kit is a **universal refactoring skill for AI coding tools** — a modular add-on that augments AI assistants' code refactoring capabilities with structured knowledge and workflows. Supports **14 tools** via an adapter architecture. The system follows a **progressive disclosure** pattern: references are loaded on-demand, not preloaded.
 
 ```
 User Request (natural language or slash command)
@@ -194,7 +194,47 @@ else:
 3. Run tests
 4. Report
 
-### 4. Reference Knowledge Bases (`references/`)
+### 4. Adapter Architecture (`adapters/`)
+
+**Purpose:** Translate canonical skill content into tool-specific formats for 14 AI coding tools.
+
+**Components:**
+
+- **`base-adapter.js`** — Abstract base class defining the adapter interface: `name`, `displayName`, `capabilities`, `install()`, `uninstall()`, plus shared utilities (`readCanonical`, `writeFile`, `writeMarker`, `hasMarker`, `removeMarker`, `copyRecursive`, `collectFiles`)
+- **`registry.js`** — Convention-based discovery singleton. Scans `adapters/` for `.js` files, instantiates each, registers by `adapter.name`. Provides `get(name)`, `has(name)`, `list()`, `getDefault()`
+- **`content-utils.js`** — Content transformation utilities: `stripClaudeFrontmatter`, `stripClaudeDirectives`, `truncateToLimit`, `wrapWithMarkers`, `appendToExistingFile`, `validateMarkers`
+
+**Adapter Tiers:**
+
+| Tier | Fidelity | Adapters | Format |
+|------|----------|----------|--------|
+| 1 | Full | Cursor, Windsurf, Gemini CLI, Codex CLI | Native markdown rules/sections |
+| 2 | High | Copilot, Roo Code, Antigravity, OpenCode | Adapted sections with markers |
+| 3 | Adapted | Continue.dev, CodeBuddy, Kiro | Tool-specific templates |
+| 4 | Best-effort | Trae, Qoder | Markdown with warnings |
+
+**Capability Flags:**
+
+```javascript
+{
+  slashCommands: boolean,      // Supports /refactor slash commands
+  separateReferences: boolean, // Stores references as separate files
+  workflows: boolean,          // Supports workflow definitions
+  fileGlobs: boolean,          // Supports file glob filtering
+  bestEffort: boolean          // Best-effort format (limited docs)
+}
+```
+
+**Section Markers:** Adapters that write to shared files (Codex CLI, OpenCode, Copilot, Windsurf) use HTML comment markers for safe insert/replace:
+```
+<!-- refactoring-kit:start -->
+...content...
+<!-- refactoring-kit:end -->
+```
+
+OpenCode uses distinct markers (`refactoring-kit-opencode:start/end`) for Codex coexistence in AGENTS.md.
+
+### 5. Reference Knowledge Bases (`references/`)
 
 #### Core References
 
@@ -433,21 +473,26 @@ For directory-level refactoring with 3+ independent tasks:
 ### Installation Flow
 
 **npm postinstall Hook** (`install-skill.js`):
-1. Read `.claude-skill.json` configuration
-2. Copy skill files (SKILL.md, REFERENCE.md, references/, resources/) to `~/.claude/skills/refactoring/` (global) or `.claude/skills/refactoring/` (project)
-3. Copy command files to `~/.claude/commands/` (global) or `.claude/commands/` (project)
-4. Make commands available as slash commands in Claude Code
+1. Delegates to `adapters/claude-code.js` adapter (default tool)
+2. Copies skill files (SKILL.md, REFERENCE.md, references/, resources/) to `~/.claude/skills/refactoring/` (global) or `.claude/skills/refactoring/` (project)
+3. Copies command files to `~/.claude/commands/` (global) or `.claude/commands/` (project)
+
+**CLI Multi-Tool Install** (`cli.js install`):
+1. Parse `--tool=<names>` flag (comma-separated, default: claude-code)
+2. Look up adapter(s) in registry
+3. Each adapter's `install()` translates canonical content to tool-native format
+4. Write files to tool-specific locations (e.g., `.cursor/rules/`, `.github/copilot-instructions.md`)
 
 **npm preuninstall Hook** (`uninstall-skill.js`):
-1. Remove skill files from `~/.claude/skills/refactoring/`
-2. Remove command files from `~/.claude/commands/`
-3. Clean up directories if empty
+1. Delegates to `adapters/claude-code.js` adapter
+2. Removes skill and command files
+3. Cleans up directories if empty
 
 ### Distribution Channels
 
 - **npm Registry:** `npm install -g refactoring-kit` (global) or `npm install --save-dev` (project)
-- **GitHub:** Clone for manual installation
-- **Claude Code Skill Store:** Future distribution channel (planned)
+- **CLI:** `npx refactoring-kit install --tool=cursor,windsurf` for multi-tool
+- **GitHub:** Clone for manual installation (Claude Code only)
 
 ## Extension Points
 

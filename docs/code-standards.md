@@ -8,14 +8,29 @@ refactoring-kit/
 ├── REFERENCE.md                       # Detailed phase instructions (on-demand)
 ├── README.md                          # User-facing documentation
 ├── CHANGELOG.md                       # Version history
-├── package.json                       # npm metadata (v6.0.0, bin entry for cli.js)
+├── package.json                       # npm metadata (v7.0.0, bin entry for cli.js)
 ├── cli.js                             # Commander-based CLI (NEW — Phase 02)
 ├── .claude-skill.json                 # Skill registration
 ├── LICENSE                            # MIT license
 │
-├── adapters/                          # Multi-tool adapters (NEW — Phase 02)
-│   ├── registry.js                    # Tool adapter registry
-│   └── claude-code.js                 # Claude Code adapter
+├── adapters/                          # Multi-tool adapters (14 tools)
+│   ├── registry.js                    # Convention-based adapter registry
+│   ├── base-adapter.js                # Abstract base class
+│   ├── content-utils.js               # Content transformation utilities
+│   ├── claude-code.js                 # Tier 1: Claude Code adapter
+│   ├── cursor.js                      # Tier 1: Cursor adapter
+│   ├── windsurf.js                    # Tier 1: Windsurf adapter
+│   ├── gemini-cli.js                  # Tier 1: Gemini CLI adapter
+│   ├── codex-cli.js                   # Tier 1: Codex CLI adapter
+│   ├── copilot.js                     # Tier 2: GitHub Copilot adapter
+│   ├── roo-code.js                    # Tier 2: Roo Code adapter
+│   ├── antigravity.js                 # Tier 2: Antigravity adapter
+│   ├── opencode.js                    # Tier 2: OpenCode adapter
+│   ├── continue-dev.js                # Tier 3: Continue.dev adapter
+│   ├── codebuddy.js                   # Tier 3: CodeBuddy adapter
+│   ├── kiro.js                        # Tier 3: Kiro adapter (limited)
+│   ├── trae.js                        # Tier 4: Trae adapter (best-effort)
+│   └── qoder.js                       # Tier 4: Qoder adapter (best-effort)
 │
 ├── resources/
 │   └── templates/
@@ -70,8 +85,13 @@ refactoring-kit/
 ├── install-skill.js                   # postinstall hook — copy skill to ~/.claude/skills/
 ├── uninstall-skill.js                 # preuninstall hook — remove skill files
 │
-├── tests/                             # Test suite (NEW — Phase 02)
-│   └── phase-02-cli.test.js          # CLI command tests (install, uninstall, tools)
+├── tests/                             # Test suite (172 tests)
+│   ├── phase-01-base-infra.test.js    # Base adapter + content utils (26 tests)
+│   ├── phase-02-cli.test.js           # CLI commands (15 tests)
+│   ├── phase-03-tier1-adapters.test.js # Cursor, Windsurf, Gemini, Codex (40 tests)
+│   ├── phase-04-tier2-adapters.test.js # Copilot, Roo Code, Antigravity, OpenCode (45 tests)
+│   ├── phase-05-tier3-adapters.test.js # Continue.dev, CodeBuddy, Kiro (26 tests)
+│   └── phase-06-tier4-adapters.test.js # Trae, Qoder + CLI integration (20 tests)
 │
 ├── docs/                              # Internal documentation (this folder)
 │   ├── project-overview-pdr.md        # Project vision, PDR, roadmap
@@ -292,21 +312,35 @@ refactoring-kit tools
 }
 ```
 
-**Current Adapter:** `adapters/claude-code.js`
-- Handles installation for Claude Code globally (`~/.claude/skills/refactoring`) or project-level (`.claude/skills/refactoring`)
-- Coordinates with postinstall hook (`install-skill.js`)
-- Returns `{ success, message, files }` for each operation
+**Adapters (14 total):**
 
-### Testing (Phase 02)
+| Tier | Adapter | Format |
+|------|---------|--------|
+| 1 (full) | `claude-code.js`, `cursor.js`, `windsurf.js`, `gemini-cli.js`, `codex-cli.js` | Native tool format |
+| 2 (high) | `copilot.js`, `roo-code.js`, `antigravity.js`, `opencode.js` | Adapted with markers |
+| 3 (adapted) | `continue-dev.js`, `codebuddy.js`, `kiro.js` | Tool-specific templates |
+| 4 (best-effort) | `trae.js`, `qoder.js` | Markdown with warnings |
 
-**Test File:** `tests/phase-02-cli.test.js` (15 tests)
+**Content Utilities** (`content-utils.js`):
+- `stripClaudeFrontmatter(content)` — Remove YAML frontmatter from canonical files
+- `stripClaudeDirectives(content)` — Remove Claude-specific directives (`$ARGUMENTS`, `Activate`)
+- `truncateToLimit(content, limit)` — Truncate to character limit for tools with size constraints
+- `wrapWithMarkers(content, start, end)` — Wrap content with HTML comment section markers
+- `appendToExistingFile(filePath, content, start, end)` — Insert/replace section in shared files
+- `validateMarkers(content, start, end)` — Validate marker pair integrity
 
-Coverage includes:
-1. **Install command:** global vs project scope, dry-run validation
-2. **Uninstall command:** file removal, error handling
-3. **Tools command:** output formatting, capability flag validation
-4. **Registry:** adapter lookup, enumeration
-5. **Error handling:** invalid tool names, file system errors
+### Testing
+
+**172 tests** across 6 test files:
+
+| File | Tests | Coverage |
+|------|-------|----------|
+| `phase-01-base-infra.test.js` | 26 | BaseAdapter, content-utils, registry |
+| `phase-02-cli.test.js` | 15 | CLI commands, install/uninstall/tools |
+| `phase-03-tier1-adapters.test.js` | 40 | Cursor, Windsurf, Gemini CLI, Codex CLI |
+| `phase-04-tier2-adapters.test.js` | 45 | Copilot, Roo Code, Antigravity, OpenCode |
+| `phase-05-tier3-adapters.test.js` | 26 | Continue.dev, CodeBuddy, Kiro |
+| `phase-06-tier4-adapters.test.js` | 20 | Trae, Qoder, CLI integration |
 
 Run via:
 ```bash
@@ -385,7 +419,7 @@ npm test
 - **Clarity:** Each entry should be actionable and reference relevant files
 - **Breaking changes:** Clearly marked and explained with migration guidance
 
-**Current version:** 6.0.0 (2026-02-09) — Phase 02 CLI Framework complete
+**Current version:** 7.0.0 (2026-02-09) — Multi-tool adapters (14 tools)
 
 ## Maintenance & Deprecation
 
